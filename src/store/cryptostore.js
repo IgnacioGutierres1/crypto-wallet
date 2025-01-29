@@ -3,7 +3,7 @@ import axios from "axios";
 export default {
   namespaced: true,
   state: {
-    cryptos: [],
+    cryptos: {},
   },
   getters: {
     getCryptos(state) {
@@ -11,28 +11,39 @@ export default {
     },
   },
   mutations: {
-    setCryptos(state, cryptoData) {
-      return (state.cryptos = cryptoData);
+    setCryptos(state, cryptos) {
+      state.cryptos = cryptos;
     },
   },
   actions: {
-    async fetchCryptos({ commit }, { exchange, coins }) {
-      try {
-        const cryptoData = [];
-        for (const coin of coins) {
-          const response = await axios.get(
-            `https://criptoya.com/api/${exchange}/${coin}/ars/0.1`
-          );
+    async fetchCryptos({ commit }) {
+      let cryptoData = {};
+      let coins = ["BTC", "ETH", "USDT", "USDC", "DAI", "UXD"];
+      let exchanges = ["binance", "bybit", "satoshitango", "ripio"];
 
-          cryptoData.push({
-            coin: coin,
-            exchange: exchange,
-            price: response.data.totalAsk,
-          });
+      try {
+        let promises = [];
+        for (const exchange of exchanges) {
+          cryptoData[exchange] = {};
+          for (const coin of coins) {
+            let request = axios
+              .get(`https://criptoya.com/api/${exchange}/${coin}/ARS`)
+              .then((response) => {
+                cryptoData[exchange][coin] = { price: response.data.totalBid };
+              })
+              .catch((error) => {
+                console.warn(`Error obteniendo ${coin} en ${exchange}:`, error);
+                cryptoData[exchange][coin] = { price: null }; // Fallback en caso de error
+              });
+
+            promises.push(request);
+          }
         }
-        console.log(cryptoData.data), commit("setCryptos", cryptoData);
+        await Promise.all(promises);
+        console.log(cryptoData);
+        commit("setCryptos", cryptoData);
       } catch (error) {
-        console.log("Ocurrio un error", error);
+        console.error("Error en fetchCryptos:", error);
       }
     },
   },
