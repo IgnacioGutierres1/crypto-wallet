@@ -6,6 +6,23 @@
   <router-view />
 </template>
 
+<script>
+/* import { mapGetters } from "vuex"; */
+
+export default {
+  data() {
+    return {
+      login: false,
+    };
+  },
+  /*  computed: {
+    isLogin() {
+      
+    }
+  } */
+};
+</script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

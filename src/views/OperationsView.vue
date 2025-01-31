@@ -3,23 +3,24 @@
     <h1>Compra y Venta de CryptoActivos</h1>
   </div>
   <div>
-    <table>
+    <select v-model="selectedExchange">
+      <option v-for="exchange in exchanges" :key="exchange" :value="exchange">
+        {{ exchange }}
+      </option>
+    </select>
+  </div>
+  <div>
+    <table v-if="selectedExchange">
       <thead>
         <tr>
-          <th>Exchange</th>
           <th>Criptomoneda</th>
-          <th>Precio</th>
+          <th>Precio (ARS)</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(coins, exchange) in getCryptosData" :key="exchange">
-          <template v-for="(coinData, coin) in coins" :key="coin">
-            <tr>
-              <td>{{ exchange }}</td>
-              <td>{{ coin }}</td>
-              <td>{{ coinData.price }}</td>
-            </tr>
-          </template>
+        <tr v-for="(coinData, coin) in cryptos[selectedExchange]" :key="coin">
+          <td>{{ coin }}</td>
+          <td>{{ convertPrice(coinData.price) }}</td>
         </tr>
       </tbody>
     </table>
@@ -32,19 +33,29 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "OperationsView",
   data() {
-    return {};
+    return {
+      selectedExchange: "",
+    };
   },
   methods: {
     ...mapActions("cryptostore", ["fetchCryptos"]),
-  },
-  computed: {
-    ...mapGetters("cryptostore", ["getCryptos"]),
-    getCryptosData() {
-      return this.getCryptos;
+    convertPrice(defaultPrice) {
+      if (defaultPrice !== null && defaultPrice !== undefined) {
+        return "$ " + defaultPrice.toLocaleString("es-AR");
+      }
     },
   },
-  mounted() {
-    this.fetchCryptos();
+  computed: {
+    ...mapGetters("cryptostore", ["cryptos", "exchanges"]),
+    getCryptos() {
+      return this.cryptos;
+    },
+  },
+  async mounted() {
+    await this.fetchCryptos();
+    if (this.exchanges.lenght > 0) {
+      this.selectedExchange = this.exchanges[0];
+    }
   },
 };
 </script>

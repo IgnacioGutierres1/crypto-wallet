@@ -6,13 +6,16 @@ export default {
     cryptos: {},
   },
   getters: {
-    getCryptos(state) {
+    cryptos(state) {
       return state.cryptos;
+    },
+    exchanges(state) {
+      return Object.keys(state.cryptos);
     },
   },
   mutations: {
-    setCryptos(state, cryptos) {
-      state.cryptos = cryptos;
+    setCryptos(state, cryptoData) {
+      state.cryptos = cryptoData;
     },
   },
   actions: {
@@ -33,7 +36,7 @@ export default {
               })
               .catch((error) => {
                 console.warn(`Error obteniendo ${coin} en ${exchange}:`, error);
-                cryptoData[exchange][coin] = { price: null }; // Fallback en caso de error
+                delete cryptoData[exchange][coin];
               });
 
             promises.push(request);
