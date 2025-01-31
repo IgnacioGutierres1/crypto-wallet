@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav v-if="login">
     <router-link to="/">Inicio</router-link> |
     <router-link to="/OperationsView">Operaciones</router-link>
   </nav>
@@ -7,19 +7,15 @@
 </template>
 
 <script>
-/* import { mapGetters } from "vuex"; */
+import { mapGetters } from "vuex";
 
 export default {
   data() {
-    return {
-      login: false,
-    };
+    return {};
   },
-  /*  computed: {
-    isLogin() {
-      
-    }
-  } */
+  computed: {
+    ...mapGetters("user", ["login"]),
+  },
 };
 </script>
 

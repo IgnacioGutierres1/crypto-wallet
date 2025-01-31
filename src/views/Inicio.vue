@@ -18,7 +18,7 @@
 
     <div>
       <p>Username: {{ userName }}</p>
-      <p>ID: {{ userId }}</p>
+      <p>ID: {{ getUserId }}</p>
     </div>
   </div>
 </template>
@@ -43,9 +43,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters("user", ["getUserName", "getUserId"]),
-    userId() {
-      return this.getUserId;
+    ...mapGetters("user", ["userName", "userId"]),
+    getUserId() {
+      return this.userId;
     },
   },
 };

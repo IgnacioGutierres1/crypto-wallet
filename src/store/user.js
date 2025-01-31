@@ -3,13 +3,17 @@ export default {
   state: {
     userName: "",
     userId: "",
+    login: false,
   },
   getters: {
-    getUserName(state) {
+    userName(state) {
       return state.userName;
     },
-    getUserId(state) {
+    userId(state) {
       return state.userId;
+    },
+    login(state) {
+      return Boolean(state.userId);
     },
   },
   mutations: {
