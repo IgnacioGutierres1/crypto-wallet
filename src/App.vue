@@ -1,15 +1,20 @@
 <template>
-  <nav v-if="login">
+  <!-- <nav>
     <router-link to="/">Inicio</router-link> |
-    <router-link to="/OperationsView">Operaciones</router-link>
-  </nav>
+    <router-link to="/OperationsView">Operacion</router-link>
+  </nav> -->
+  <HeaderComponent></HeaderComponent>
   <router-view />
 </template>
 
 <script>
+import HeaderComponent from "@/components/HeaderComponent.vue";
 import { mapGetters } from "vuex";
 
 export default {
+  components: {
+    HeaderComponent,
+  },
   data() {
     return {};
   },
@@ -20,10 +25,16 @@ export default {
 </script>
 
 <style>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }

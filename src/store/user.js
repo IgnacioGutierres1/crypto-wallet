@@ -13,7 +13,7 @@ export default {
       return state.userId;
     },
     login(state) {
-      return Boolean(state.userId);
+      return state.userId !== "" && state.userId !== null;
     },
   },
   mutations: {
