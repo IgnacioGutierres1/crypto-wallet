@@ -50,4 +50,30 @@ export default {
       }
     },
   },
+  async postOperation(userId, action, coin, amount, money) {
+    try {
+      const datetime = new Date().toISOString();
+
+      const apiClient = await axios.post(
+        "https://laboratorio3-f36a.restdb.io/rest",
+        {
+          user_id: userId,
+          action: action,
+          crypto_code: coin,
+          crypto_amount: amount,
+          money: money,
+          datetime: datetime,
+        },
+        {
+          headers: {
+            "x-apikey": "60eb09146661365596af552f",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return apiClient.data;
+    } catch (error) {
+      console.error("Error en el post", error);
+    }
+  },
 };

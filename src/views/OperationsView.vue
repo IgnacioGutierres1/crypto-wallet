@@ -1,7 +1,10 @@
 <template>
+  <!-- Main Container -->
   <div class="operations-view">
     <h1 class="operations-view__title">Compra y Venta de CryptoActivos</h1>
+    <!-- Coin Container -->
     <div class="coin-container">
+      <!-- Exchanges Select -->
       <div>
         <select class="coin-container__select" v-model="selectedExchange">
           <option
@@ -13,6 +16,8 @@
           </option>
         </select>
       </div>
+      <!-- Exchanges Select ENDS -->
+      <!-- Coin Table Container -->
       <table class="coin-container__table" v-if="selectedExchange">
         <thead>
           <tr>
@@ -25,6 +30,7 @@
             class="coin-container__table--trcoins"
             v-for="(coinData, coin) in cryptos[selectedExchange]"
             :key="coin"
+            @click="openModal(coin, coinData.price)"
           >
             <td class="coin-container__table--td">{{ coin }}</td>
             <td class="coin-container__table--td">
@@ -33,8 +39,26 @@
           </tr>
         </tbody>
       </table>
+      <!-- Coin Table Container ENDS -->
+      <!-- Coin Modal Window -->
+      <div v-if="coinClicked" class="coin-container__modal">
+        <a @click="closeModal" class="coin-container__modal--closebutton">X</a>
+        <h2>{{ selectedCoin }}</h2>
+        <p>Precio: {{ convertPrice(selectedPrice) }}</p>
+        <input type="number" v-model="amount" placeholder="Monto a gastar" />
+        <div class="coin-container__modal--buttons">
+          <button class="coin-container__modal--button" @click="buy">
+            Comprar
+          </button>
+          <button class="coin-container__modal--button" @click="sell">
+            Vender
+          </button>
+        </div>
+      </div>
+      <!-- Coin Modal Window ENDS -->
     </div>
   </div>
+  <!-- Main Container ENDS -->
 </template>
 
 <script>
@@ -45,6 +69,10 @@ export default {
   data() {
     return {
       selectedExchange: "",
+      coinClicked: false,
+      selectedCoin: "",
+      selectedPrice: 0,
+      amount: "",
     };
   },
   methods: {
@@ -53,6 +81,15 @@ export default {
       if (defaultPrice !== null && defaultPrice !== undefined) {
         return "$ " + defaultPrice.toLocaleString("es-AR");
       }
+    },
+    openModal(coin, price) {
+      this.selectedCoin = coin;
+      this.selectedPrice = price;
+      this.coinClicked = true;
+    },
+    closeModal() {
+      this.coinClicked = false;
+      this.amount = "";
     },
   },
   computed: {
@@ -63,7 +100,7 @@ export default {
   },
   async mounted() {
     await this.fetchCryptos();
-    if (this.exchanges.lenght > 0) {
+    if (this.exchanges.length > 0) {
       this.selectedExchange = this.exchanges[0];
     }
   },
@@ -71,6 +108,7 @@ export default {
 </script>
 
 <style scoped>
+/* --- Operations Main Styles Section --- */
 .operations-view {
   display: flex;
   width: 80vw;
@@ -78,7 +116,9 @@ export default {
   margin: 0 auto;
   flex-direction: column;
 }
+/* --- Operations Main Styles Section ENDS --- */
 
+/* --- Coin Container Styles Section --- */
 .coin-container {
   display: flex;
   margin: 15px;
@@ -88,6 +128,7 @@ export default {
   justify-content: center;
   position: relative;
 }
+/* --- Exchanges Select Styles Section --- */
 
 .coin-container__select {
   margin: 5px;
@@ -96,6 +137,10 @@ export default {
   top: 0;
   left: 215px;
 }
+
+/* --- Exchanges Select Styles Section --- */
+
+/* --- Coin Table Styles Section --- */
 
 .coin-container__table {
   width: 60%;
@@ -119,4 +164,34 @@ export default {
   background-color: #0001;
   cursor: pointer;
 }
+/* --- Coin Table Styles Section ENDS--- */
+
+/* --- Modal Styles Section --- */
+.coin-container__modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: fixed;
+  width: 30%;
+  height: 70%;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+.coin-container__modal--button {
+  margin: 10px;
+  padding: 8px 5px;
+}
+
+.coin-container__modal--closebutton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  cursor: pointer;
+}
+
+/* --- Coin Container Styles Section ENDS --- */
 </style>
