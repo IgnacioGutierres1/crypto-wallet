@@ -45,7 +45,13 @@
         <a @click="closeModal" class="coin-container__modal--closebutton">X</a>
         <h2>{{ selectedCoin }}</h2>
         <p>Precio: {{ convertPrice(selectedPrice) }}</p>
-        <input type="number" v-model="amount" placeholder="Monto a gastar" />
+        <p>Dinero disponible:</p>
+        <input
+          type="number"
+          v-model="moneyQuantity"
+          placeholder="Monto a gastar"
+        />
+        <p>Cantidad de {{ selectedCoin }}: {{ cryptoQuantity() }}</p>
         <div class="coin-container__modal--buttons">
           <button class="coin-container__modal--button" @click="buy">
             Comprar
@@ -72,14 +78,20 @@ export default {
       coinClicked: false,
       selectedCoin: "",
       selectedPrice: 0,
-      amount: "",
+      moneyQuantity: 0,
     };
   },
   methods: {
-    ...mapActions("cryptostore", ["fetchCryptos"]),
+    ...mapActions("cryptostore", [
+      "fetchCryptos",
+      "postOperation",
+      "metodoPrueba",
+    ]),
     convertPrice(defaultPrice) {
-      if (defaultPrice !== null && defaultPrice !== undefined) {
+      if (defaultPrice) {
         return "$ " + defaultPrice.toLocaleString("es-AR");
+      } else {
+        return "-";
       }
     },
     openModal(coin, price) {
@@ -87,21 +99,61 @@ export default {
       this.selectedPrice = price;
       this.coinClicked = true;
     },
+
+    cryptoQuantity() {
+      if (this.moneyQuantity >= 0) {
+        return this.moneyQuantity / this.selectedPrice;
+      } else {
+        return 0;
+      }
+    },
+
+    buy() {
+      const consulta = {
+        userId: this.getUserId,
+        action: "purchase",
+        coin: this.selectedCoin,
+        amount: this.cryptoQuantity(),
+        money: this.moneyQuantity,
+        datetime: new Date().toISOString(),
+        operacion: "Compra",
+      };
+      console.log("Datos Enviados", consulta);
+
+      let pUserId = "22211qaa2";
+      console.log(pUserId);
+      this.metodoPrueba(12345);
+
+      /*   try {} catch (error) {
+        alert("Error en la Compra");
+      } */
+    },
+
+    sell() {},
+
     closeModal() {
       this.coinClicked = false;
-      this.amount = "";
+      this.moneyQuantity = "";
     },
   },
   computed: {
     ...mapGetters("cryptostore", ["cryptos", "exchanges"]),
-    getCryptos() {
-      return this.cryptos;
+    ...mapGetters("user", ["userName", "userId"]),
+    getUserId() {
+      return this.userId;
     },
   },
   async mounted() {
-    await this.fetchCryptos();
-    if (this.exchanges.length > 0) {
-      this.selectedExchange = this.exchanges[0];
+    try {
+      await this.fetchCryptos();
+      await this.metodoPrueba();
+      if (this.exchanges.length > 0) {
+        this.selectedExchange = this.exchanges[0];
+      } else {
+        this.selectedExchange = "";
+      }
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
     }
   },
 };

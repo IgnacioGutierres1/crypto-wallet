@@ -49,31 +49,40 @@ export default {
         console.error("Error en fetchCryptos:", error);
       }
     },
-  },
-  async postOperation(userId, action, coin, amount, money) {
-    try {
-      const datetime = new Date().toISOString();
-
-      const apiClient = await axios.post(
-        "https://laboratorio3-f36a.restdb.io/rest",
-        {
-          user_id: userId,
-          action: action,
-          crypto_code: coin,
-          crypto_amount: amount,
-          money: money,
-          datetime: datetime,
-        },
-        {
-          headers: {
-            "x-apikey": "60eb09146661365596af552f",
-            "Content-Type": "application/json",
-          },
+    async postOperation(consulta) {
+      console.log("Objeto antes de data", consulta);
+      const operaciondata = {
+        user_id: consulta.userId,
+        action: consulta.action,
+        crypto_code: consulta.coin,
+        crypto_amount: consulta.amount,
+        money: consulta.money,
+        datetime: consulta.datetime,
+        operacion: consulta.operacion,
+      };
+      console.log("Objeto Recibido: ", operaciondata);
+      try {
+        const apiClient = await axios.post(
+          "https://laboratorio3-f36a.restdb.io/rest/transactions",
+          operaciondata,
+          {
+            headers: {
+              "x-apikey": "60eb09146661365596af552f",
+            },
+          }
+        );
+        console.log("respuesta de la api:", apiClient);
+        if (apiClient.status === 200 || apiClient.status == 201) {
+          alert(`${consulta.operacion} Exitosa`);
         }
-      );
-      return apiClient.data;
-    } catch (error) {
-      console.error("Error en el post", error);
-    }
+        return apiClient.data;
+      } catch (error) {
+        console.error("Error en el post", error);
+        alert(`Error en la ${consulta.operacion} `);
+      }
+    },
+    metodoPrueba(alfanumerico) {
+      console.log(alfanumerico);
+    },
   },
 };
