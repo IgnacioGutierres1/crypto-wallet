@@ -50,6 +50,7 @@
           type="number"
           v-model="moneyQuantity"
           placeholder="Monto a gastar"
+          step="0.01"
         />
         <p>Cantidad de {{ selectedCoin }}: {{ cryptoQuantity() }}</p>
         <div class="coin-container__modal--buttons">
@@ -68,6 +69,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -82,11 +84,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("cryptostore", [
-      "fetchCryptos",
-      "postOperation",
-      "metodoPrueba",
-    ]),
+    ...mapActions("cryptostore", ["fetchCryptos", "postOperation"]),
     convertPrice(defaultPrice) {
       if (defaultPrice) {
         return "$ " + defaultPrice.toLocaleString("es-AR");
@@ -101,35 +99,101 @@ export default {
     },
 
     cryptoQuantity() {
-      if (this.moneyQuantity >= 0) {
-        return this.moneyQuantity / this.selectedPrice;
+      if (this.moneyCheck() !== null) {
+        return this.moneyCheck() / this.selectedPrice;
       } else {
         return 0;
       }
     },
 
+    moneyCheck() {
+      if (this.moneyQuantity > 0) {
+        return this.moneyQuantity;
+      } else {
+        alert("El monto ingresado no es correcto");
+        return null;
+      }
+    },
+
     buy() {
-      const consulta = {
+
+      if (this.moneyCheck() === null) {
+        return;
+      }
+
+      const request = {
         userId: this.getUserId,
         action: "purchase",
         coin: this.selectedCoin,
         amount: this.cryptoQuantity(),
-        money: this.moneyQuantity,
+        money: this.moneyCheck(),
         datetime: new Date().toISOString(),
         operacion: "Compra",
       };
-      console.log("Datos Enviados", consulta);
+      console.log("Datos Enviados", request);
 
-      let pUserId = "22211qaa2";
-      console.log(pUserId);
-      this.metodoPrueba(12345);
-
-      /*   try {} catch (error) {
+      try {
+        this.postOperation(request);
+      } catch (error) {
         alert("Error en la Compra");
-      } */
+      }
     },
 
-    sell() {},
+    sell() {
+
+      if (this.moneyCheck() === null) {
+        return;
+      }
+
+      const request = {
+        userId: this.getUserId,
+        action: "sale",
+        coin: this.selectedCoin,
+        amount: this.cryptoQuantity(),
+        money: this.moneyCheck(),
+        datetime: new Date().toISOString(),
+        operacion: "Venta",
+      };
+      console.log("Datos Enviados", request);
+
+      try {
+        this.postOperation(request);
+      } catch (error) {
+        alert("Error en la Compra");
+      }
+    },
+
+    async postOperation(request) {
+      console.log("Objeto antes de data", request);
+      const postRequestData = {
+        user_id: request.userId,
+        action: request.action,
+        crypto_code: request.coin,
+        crypto_amount: request.amount,
+        money: request.money,
+        datetime: request.datetime,
+      };
+      console.log("Objeto Recibido: ", postRequestData);
+      try {
+        const apiClient = await axios.post(
+          "https://laboratorio3-f36a.restdb.io/rest/transactions",
+          postRequestData,
+          {
+            headers: {
+              "x-apikey": "60eb09146661365596af552f",
+            },
+          }
+        );
+        console.log("respuesta de la api:", apiClient);
+        if (apiClient.status === 200 || apiClient.status == 201) {
+          alert(`${request.operacion} Exitosa`);
+        }
+        return apiClient.data;
+      } catch (error) {
+        console.error("Error en el post", error);
+        alert(`Error en la ${request.operacion} `);
+      }
+    },
 
     closeModal() {
       this.coinClicked = false;
@@ -146,7 +210,6 @@ export default {
   async mounted() {
     try {
       await this.fetchCryptos();
-      await this.metodoPrueba();
       if (this.exchanges.length > 0) {
         this.selectedExchange = this.exchanges[0];
       } else {
