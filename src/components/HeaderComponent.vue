@@ -7,6 +7,9 @@
       <router-link to="/OperationsView" class="header-container__link"
         >Operaciones</router-link
       >
+      <router-link to="/WalletView" class="header-container__link"
+        >Wallet</router-link
+      >
     </div>
     <!-- Nav Section -->
     <!-- Profile Section -->

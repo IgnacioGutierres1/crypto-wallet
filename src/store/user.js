@@ -1,10 +1,12 @@
+import axios from "axios";
+
 export default {
   namespaced: true,
   state: {
     userName: localStorage.getItem("userName") || "",
     userId: localStorage.getItem("userId") || "",
     wallet: {
-      ars: 0,
+      ars: 1000000,
       cryptos: {},
     },
     login: false,
@@ -24,13 +26,15 @@ export default {
     },
   },
   mutations: {
-    setUser(state, { userName, userId, wallet }) {
+    setUser(state, { userName, userId }) {
       state.userName = userName;
       state.userId = userId;
-      state.wallet = wallet;
       localStorage.setItem("userName", userName);
       localStorage.setItem("userId", userId);
-      localStorage.setItem("wallet", wallet);
+    },
+    setWallet(state, wallet) {
+      state.wallet = wallet;
+      localStorage.setItem("wallet", JSON.stringify(wallet));
     },
   },
   actions: {
@@ -53,32 +57,57 @@ export default {
       }
     },
 
-    async loadWallet({commit}, state) {
+    async loadWallet({ commit, state }) {
       try {
-        const request = await axios.get(`https://laboratorio3-f36a.restdb.io/rest/transactions?q={"user_id": "${state.userId}"}`,
-        {
-          headers: {
-            "x-apikey": "60eb09146661365596af552f",
+        const request = await axios.get(
+          `https://laboratorio3-f36a.restdb.io/rest/transactions?q={"user_id": "${state.userId}"}`,
+          {
+            headers: {
+              "x-apikey": "60eb09146661365596af552f",
+            },
           }
-        });
-        for(const transactions of request.data._id) {
-          if(transactions.action === "purchase") {
-            state.wallet.ars -= transactions.money;
-          } else if (transactions.action === "sale") {
-            state.wallet.ars += transactions.money;
-          }
-            if(state.wallet.cryptos[transactions.crypto_code]) {
-              state.wallet.cryptos = transactions.crypto_amount;
+        );
+        if (request.status === 201 || request.status === 200) {
+          alert("Datos Cargados Exitosamente");
+          console.log("ID: ", state.userId);
+          console.log("Historial: ", request.data);
+        }
+
+        const tempWallet = {
+          ars: state.wallet.ars,
+          cryptos: {},
+        };
+
+        for (const transactions of request.data) {
+          if (transactions.action === "purchase") {
+            tempWallet.ars -= parseFloat(transactions.money);
+            if (tempWallet.cryptos[transactions.crypto_code]) {
+              tempWallet.cryptos[transactions.crypto_code] += parseFloat(
+                transactions.crypto_amount
+              );
             } else {
-              state.wallet.cryptos = transactions.crypto_code;
-              state.wallet.cryptos + transactions.crypto_amount;
+              tempWallet.cryptos[transactions.crypto_code] = parseFloat(
+                transactions.crypto_amount
+              );
+            }
+          } else if (transactions.action === "sale") {
+            tempWallet.ars += parseFloat(transactions.money);
+
+            if (tempWallet.cryptos[transactions.crypto_code]) {
+              tempWallet.cryptos[transactions.crypto_code] -= parseFloat(
+                transactions.crypto_amount
+              );
             }
           }
-
-          commit("setUser", wallet?)
         }
-      } 
-    }
+
+        console.log(tempWallet);
+
+        commit("setWallet", tempWallet);
+      } catch (error) {
+        console.error("Error cargando wallet: ", error);
+      }
+    },
 
     logOut({ commit }) {
       commit("setUser", { userName: "", userId: "" });

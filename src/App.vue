@@ -1,8 +1,4 @@
 <template>
-  <!-- <nav>
-    <router-link to="/">Inicio</router-link> |
-    <router-link to="/OperationsView">Operacion</router-link>
-  </nav> -->
   <HeaderComponent></HeaderComponent>
   <router-view />
 </template>

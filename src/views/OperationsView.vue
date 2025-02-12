@@ -109,14 +109,10 @@ export default {
     moneyCheck() {
       if (this.moneyQuantity > 0) {
         return this.moneyQuantity;
-      } else {
-        alert("El monto ingresado no es correcto");
-        return null;
       }
     },
 
     buy() {
-
       if (this.moneyCheck() === null) {
         return;
       }
@@ -140,7 +136,6 @@ export default {
     },
 
     sell() {
-
       if (this.moneyCheck() === null) {
         return;
       }
