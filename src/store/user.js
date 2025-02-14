@@ -5,6 +5,7 @@ export default {
   state: {
     userName: localStorage.getItem("userName") || "",
     userId: localStorage.getItem("userId") || "",
+    history: {},
     wallet: {
       ars: 1000000,
       cryptos: {},
@@ -17,6 +18,9 @@ export default {
     },
     userId(state) {
       return state.userId;
+    },
+    history(state) {
+      return state.history;
     },
     wallet(state) {
       return state.wallet;
@@ -35,6 +39,10 @@ export default {
     setWallet(state, wallet) {
       state.wallet = wallet;
       localStorage.setItem("wallet", JSON.stringify(wallet));
+    },
+    setHistory(state, history) {
+      state.history = history;
+      localStorage.setItem("history", JSON.stringify(history));
     },
   },
   actions: {
@@ -57,56 +65,70 @@ export default {
       }
     },
 
-    async loadWallet({ commit, state }) {
+    async loadHistory({ commit, state }) {
+      var tempHistory = {};
+
       try {
         const request = await axios.get(
-          `https://laboratorio3-f36a.restdb.io/rest/transactions?q={"user_id": "${state.userId}"}`,
+          `https://labor3-d60e.restdb.io/rest/transactions?q={"user_id": "${state.userId}"}`,
           {
             headers: {
-              "x-apikey": "60eb09146661365596af552f",
+              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
             },
           }
         );
         if (request.status === 201 || request.status === 200) {
           alert("Datos Cargados Exitosamente");
-          console.log("ID: ", state.userId);
-          console.log("Historial: ", request.data);
-        }
-
-        const tempWallet = {
-          ars: state.wallet.ars,
-          cryptos: {},
-        };
-
-        for (const transactions of request.data) {
-          if (transactions.action === "purchase") {
-            tempWallet.ars -= parseFloat(transactions.money);
-            if (tempWallet.cryptos[transactions.crypto_code]) {
-              tempWallet.cryptos[transactions.crypto_code] += parseFloat(
-                transactions.crypto_amount
-              );
-            } else {
-              tempWallet.cryptos[transactions.crypto_code] = parseFloat(
-                transactions.crypto_amount
-              );
-            }
-          } else if (transactions.action === "sale") {
-            tempWallet.ars += parseFloat(transactions.money);
-
-            if (tempWallet.cryptos[transactions.crypto_code]) {
-              tempWallet.cryptos[transactions.crypto_code] -= parseFloat(
-                transactions.crypto_amount
-              );
+          tempHistory = request.data;
+          for (const historyData of tempHistory) {
+            if (historyData.action === "purchase") {
+              historyData.action = "Compra";
+            } else if (historyData.action === "sale") {
+              historyData.action = "Venta";
             }
           }
+          console.log("Historial Temporal: ", tempHistory);
+          commit("setHistory", tempHistory);
         }
-
-        console.log(tempWallet);
-
-        commit("setWallet", tempWallet);
       } catch (error) {
-        console.error("Error cargando wallet: ", error);
+        console.log("Error al cargar el historial", error);
       }
+    },
+
+    async loadWallet({ commit, state, dispatch }) {
+      await dispatch("loadHistory");
+
+      const tempWallet = {
+        ars: state.wallet.ars,
+        cryptos: {},
+      };
+
+      for (const transactions of state.history) {
+        if (transactions.action === "Compra") {
+          tempWallet.ars -= parseFloat(transactions.money);
+          if (tempWallet.cryptos[transactions.crypto_code]) {
+            tempWallet.cryptos[transactions.crypto_code] += parseFloat(
+              transactions.crypto_amount
+            );
+          } else {
+            tempWallet.cryptos[transactions.crypto_code] = parseFloat(
+              transactions.crypto_amount
+            );
+          }
+        } else if (transactions.action === "Venta") {
+          tempWallet.ars += parseFloat(transactions.money);
+
+          if (tempWallet.cryptos[transactions.crypto_code]) {
+            tempWallet.cryptos[transactions.crypto_code] -= parseFloat(
+              transactions.crypto_amount
+            );
+          }
+        }
+      }
+
+      console.log(tempWallet);
+
+      commit("setWallet", tempWallet);
     },
 
     logOut({ commit }) {

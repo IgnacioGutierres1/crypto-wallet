@@ -22,7 +22,28 @@
       </table>
     </div>
     <div class="history-container">
-      <table></table>
+      <table>
+        <thead>
+          <tr>
+            <th>Criptomoneda</th>
+            <th>Operacion</th>
+            <th>Cantidad</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Editar o Borrar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(historyData, history) in history" :key="history">
+            <td>{{ historyData.crypto_code }}</td>
+            <td>{{ historyData.action }}</td>
+            <td>{{ historyData.crypto_amount }}</td>
+            <td>$ {{ historyData.money.toLocaleString("es-AR") }}</td>
+            <td>{{ historyData.datetime }}</td>
+            <td><a href="">Editar</a><a href="">Borrar</a></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -41,7 +62,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("user", ["wallet"]),
+    ...mapGetters("user", ["history", "wallet"]),
   },
 };
 </script>
