@@ -43,7 +43,7 @@ export default {
           }
         }
         await Promise.all(promises);
-        console.log(cryptoData);
+        /* console.log(cryptoData); */
         commit("setCryptos", cryptoData);
       } catch (error) {
         console.error("Error en fetchCryptos:", error);

@@ -87,11 +87,58 @@ export default {
               historyData.action = "Venta";
             }
           }
-          console.log("Historial Temporal: ", tempHistory);
+          /* console.log("Historial Temporal: ", tempHistory); */
           commit("setHistory", tempHistory);
         }
       } catch (error) {
         console.log("Error al cargar el historial", error);
+      }
+    },
+
+    async editHistory({ commit, state }, payload) {
+      const historyId = payload.movimentId;
+      const newMoney = payload.newMount;
+      var newAmount = 0;
+
+      var tempHistory = {
+        crypto_amount: 0,
+        money: 0,
+      };
+
+      for (const moviment of state.history) {
+        if (moviment._id === historyId) {
+          console.log("Se encontro el historial relacionado");
+          var originalAmount = parseFloat(moviment.crypto_amount);
+          var originalMoney = parseFloat(moviment.money);
+
+          var unitPrice = originalMoney / originalAmount;
+          console.log("Nueva moneda", newMoney);
+          newAmount = parseFloat(newMoney) / unitPrice;
+
+          console.log("Nuevo monto:", newAmount);
+          tempHistory = {
+            crypto_amount: newAmount,
+            money: newMoney,
+          };
+        }
+      }
+      console.log("Historial antes de entrar al try: ", tempHistory);
+
+      try {
+        const request = await axios.patch(
+          `https://labor3-d60e.restdb.io/rest/transactions/${historyId}`,
+          tempHistory,
+          {
+            headers: {
+              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+            },
+          }
+        );
+        if (request.status === 200 || request.status === 201) {
+          commit("setHistory", tempHistory);
+        }
+      } catch (error) {
+        console.log("error en el patch:", error);
       }
     },
 
