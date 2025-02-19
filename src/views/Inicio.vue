@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div v-if="!login" class="login-container">
     <h1>Crypto Wallet</h1>
     <span>Inicio de Sesión</span>
     <form @submit.prevent="sendLogin">
@@ -7,7 +7,7 @@
         <input
           type="text"
           placeholder="Ingrese su UserName"
-          v-model="userName"
+          v-model="logUserName"
           required
         />
       </div>
@@ -15,11 +15,17 @@
         <button type="submit">Obtenga su ID</button>
       </div>
     </form>
-
     <div>
       <p>Username: {{ userName }}</p>
       <p>ID: {{ getUserId }}</p>
     </div>
+  </div>
+  <div>
+    <h2>userName: {{ userName }}</h2>
+    <h3>Saldo: {{ balance }}</h3>
+    <input type="number" v-model="newBalanceAmount" Step="0.01" />
+    <button @click="depositMoney">Ingresar</button>
+    <button @click="withdrawMoney">Extraer</button>
   </div>
 </template>
 
@@ -30,20 +36,31 @@ export default {
   name: "InicioView",
   data() {
     return {
-      userName: "",
+      logUserName: "",
+      newBalanceAmount: 0,
     };
   },
   methods: {
-    ...mapActions("user", ["saveUser"]),
+    ...mapActions("user", ["saveUser", "editBalance"]),
     sendLogin() {
-      if (this.userName.trim()) {
-        this.saveUser(this.userName);
+      if (this.logUserName.trim()) {
+        this.saveUser(this.logUserName);
+      }
+    },
+    depositMoney() {
+      if (this.newBalanceAmount > 0) {
+        this.editBalance({ action: "deposit", amount: this.newBalanceAmount });
+      }
+    },
+    withdrawMoney() {
+      if (this.newBalanceAmount > 0 && this.balance >= this.newBalanceAmount) {
+        this.editBalance({ action: "withdraw", amount: this.newBalanceAmount });
       }
     },
   },
 
   computed: {
-    ...mapGetters("user", ["userName", "userId"]),
+    ...mapGetters("user", ["userName", "userId", "balance", "login"]),
     getUserId() {
       return this.userId;
     },
@@ -52,7 +69,7 @@ export default {
 </script>
 
 <style scoped>
-.home {
+.login-container {
   display: flex;
   flex-direction: column;
   align-items: center;

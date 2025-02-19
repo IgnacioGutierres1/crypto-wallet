@@ -45,7 +45,11 @@
         <a @click="closeModal" class="coin-container__modal--closebutton">X</a>
         <h2>{{ selectedCoin }}</h2>
         <p>Precio: {{ convertPrice(selectedPrice) }}</p>
-        <p>Dinero disponible:</p>
+        <p>Dinero disponible: {{ balance }}</p>
+        <p>
+          Cantidad de {{ selectedCoin }} disponible:
+          {{ portfolio[selectedCoin] }}
+        </p>
         <input
           type="number"
           v-model="moneyQuantity"
@@ -117,21 +121,23 @@ export default {
         return;
       }
 
-      const request = {
-        userId: this.getUserId,
-        action: "purchase",
-        coin: this.selectedCoin,
-        amount: this.cryptoQuantity(),
-        money: this.moneyCheck(),
-        datetime: new Date().toISOString(),
-        operacion: "Compra",
-      };
-      console.log("Datos Enviados", request);
+      if (this.moneyCheck() <= this.balance) {
+        const request = {
+          userId: this.getUserId,
+          action: "purchase",
+          coin: this.selectedCoin,
+          amount: this.cryptoQuantity(),
+          money: this.moneyCheck(),
+          datetime: new Date().toISOString(),
+          operacion: "Compra",
+        };
+        console.log("Datos Enviados", request);
 
-      try {
-        this.postOperation(request);
-      } catch (error) {
-        alert("Error en la Compra");
+        try {
+          this.postOperation(request);
+        } catch (error) {
+          alert("Error en la Compra");
+        }
       }
     },
 
@@ -140,21 +146,25 @@ export default {
         return;
       }
 
-      const request = {
-        userId: this.getUserId,
-        action: "sale",
-        coin: this.selectedCoin,
-        amount: this.cryptoQuantity(),
-        money: this.moneyCheck(),
-        datetime: new Date().toISOString(),
-        operacion: "Venta",
-      };
-      console.log("Datos Enviados", request);
+      if (this.cryptoQuantity() < this.portfolio[this.selectedCoin]) {
+        const request = {
+          userId: this.getUserId,
+          action: "sale",
+          coin: this.selectedCoin,
+          amount: this.cryptoQuantity(),
+          money: this.moneyCheck(),
+          datetime: new Date().toISOString(),
+          operacion: "Venta",
+        };
+        console.log("Datos Enviados", request);
 
-      try {
-        this.postOperation(request);
-      } catch (error) {
-        alert("Error en la Compra");
+        try {
+          this.postOperation(request);
+        } catch (error) {
+          alert("Error en la Compra");
+        }
+      } else {
+        alert("El monto supera lo que posee");
       }
     },
 
@@ -197,7 +207,7 @@ export default {
   },
   computed: {
     ...mapGetters("cryptostore", ["cryptos", "exchanges"]),
-    ...mapGetters("user", ["userName", "userId"]),
+    ...mapGetters("user", ["userName", "userId", "balance", "portfolio"]),
     getUserId() {
       return this.userId;
     },

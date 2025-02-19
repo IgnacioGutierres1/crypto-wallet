@@ -3,50 +3,64 @@ import axios from "axios";
 export default {
   namespaced: true,
   state: {
-    userName: localStorage.getItem("userName") || "",
-    userId: localStorage.getItem("userId") || "",
-    history: {},
-    wallet: {
-      ars: 1000000,
-      cryptos: {},
+    user: JSON.parse(localStorage.getItem("user")) || {
+      userName: "",
+      userId: "",
+      balance: 0,
+      portfolio: {},
     },
+    history: {},
     login: false,
   },
   getters: {
+    user(state) {
+      return state.user;
+    },
     userName(state) {
-      return state.userName;
+      return state.user.userName;
     },
     userId(state) {
-      return state.userId;
+      return state.user.userId;
+    },
+    balance(state) {
+      return state.user.balance;
+    },
+    portfolio(state) {
+      return state.user.portfolio;
     },
     history(state) {
       return state.history;
     },
-    wallet(state) {
-      return state.wallet;
-    },
     login(state) {
-      return state.userId !== "" && state.userId !== null;
+      return state.user.userId !== "" && state.user.userId !== null;
     },
   },
   mutations: {
-    setUser(state, { userName, userId }) {
-      state.userName = userName;
-      state.userId = userId;
-      localStorage.setItem("userName", userName);
-      localStorage.setItem("userId", userId);
+    setUser(state, user) {
+      state.user = user;
+      localStorage.setItem("user", JSON.stringify(user));
     },
-    setWallet(state, wallet) {
-      state.wallet = wallet;
-      localStorage.setItem("wallet", JSON.stringify(wallet));
+    setBalance(state, balance) {
+      state.user.balance = parseFloat(balance);
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
+    setPortfolio(state, { crypto, amount }) {
+      if(!state.user.portfolio[crypto]) {
+        state.user.portfolio[crypto] = amount;
+      } else {
+        state.user.portfolio[crypto] = state.user.portfolio[crypto] + amount;
+      };
+      if(state.user.portfolio[crypto] === 0) {
+        delete state.user.portfolio[crypto];
+      }
+      localStorage.setItem("user", JSON.stringify(state.user));
     },
     setHistory(state, history) {
       state.history = history;
-      localStorage.setItem("history", JSON.stringify(history));
     },
   },
   actions: {
-    saveUser({ commit }, userName) {
+    saveUser({ commit, state }, userName) {
       var tempUsers = localStorage.getItem("users");
       var usersSaved = {};
 
@@ -55,22 +69,42 @@ export default {
       }
 
       if (usersSaved[userName]) {
-        commit("setUser", { userName: userName, userId: usersSaved[userName] });
+        commit("setUser", {
+          userName: userName,
+          userId: usersSaved[userName],
+          balance: state.user.balance || 0,
+          portfolio: state.user.portfolio || {},
+        });
         alert("usuario encontrado");
       } else {
         const alphanumericId = Math.random().toString(36).slice(2, 12);
         usersSaved[userName] = alphanumericId;
         localStorage.setItem("users", JSON.stringify(usersSaved));
-        commit("setUser", { userName: userName, userId: alphanumericId });
+        commit("setUser", {
+          userName: userName,
+          userId: alphanumericId,
+          balance: 0,
+          portfolio: {},
+        });
       }
     },
 
+    logOut({ commit }) {
+      commit("setUser", {
+        userName: "",
+        userId: "",
+        balance: 0,
+        portfolio: {},
+      });
+      localStorage.removeItem("user");
+    },
+
     async loadHistory({ commit, state }) {
-      var tempHistory = {};
+      var newHistory = {};
 
       try {
         const request = await axios.get(
-          `https://labor3-d60e.restdb.io/rest/transactions?q={"user_id": "${state.userId}"}`,
+          `https://labor3-d60e.restdb.io/rest/transactions?q={"user_id": "${state.user.userId}"}`,
           {
             headers: {
               "x-apikey": "64a2e9bc86d8c525a3ed8f63",
@@ -79,55 +113,47 @@ export default {
         );
         if (request.status === 201 || request.status === 200) {
           alert("Datos Cargados Exitosamente");
-          tempHistory = request.data;
-          for (const historyData of tempHistory) {
+          newHistory = request.data;
+          for (var key in newHistory) {
+            var historyData = newHistory[key];
             if (historyData.action === "purchase") {
               historyData.action = "Compra";
             } else if (historyData.action === "sale") {
               historyData.action = "Venta";
             }
           }
-          /* console.log("Historial Temporal: ", tempHistory); */
-          commit("setHistory", tempHistory);
+          console.log("Historial Temporal: ", newHistory);
+          commit("setHistory", newHistory);
         }
       } catch (error) {
         console.log("Error al cargar el historial", error);
       }
     },
 
-    async editHistory({ commit, state }, payload) {
-      const historyId = payload.movimentId;
-      const newMoney = payload.newMount;
-      var newAmount = 0;
+    async editHistory({ commit, state, dispatch }, payload) {
+      var unitPrice =
+        parseFloat(payload.originalMoneyAmount) /
+        parseFloat(payload.originalCryptoAmount);
+      var newAmount = parseFloat(payload.newAmount) / unitPrice;
+      const moneyDifference =
+        parseFloat(payload.originalMoneyAmount) - parseFloat(payload.newAmount);
+      var newBalance;
 
-      var tempHistory = {
-        crypto_amount: 0,
-        money: 0,
+      var newMoviment = {
+        crypto_amount: newAmount,
+        money: parseFloat(payload.newAmount),
       };
 
-      for (const moviment of state.history) {
-        if (moviment._id === historyId) {
-          console.log("Se encontro el historial relacionado");
-          var originalAmount = parseFloat(moviment.crypto_amount);
-          var originalMoney = parseFloat(moviment.money);
-
-          var unitPrice = originalMoney / originalAmount;
-          console.log("Nueva moneda", newMoney);
-          newAmount = parseFloat(newMoney) / unitPrice;
-
-          console.log("Nuevo monto:", newAmount);
-          tempHistory = {
-            crypto_amount: newAmount,
-            money: newMoney,
-          };
-        }
+      if (payload.action === "Compra") {
+        newBalance = state.user.balance + moneyDifference;
+      } else if (payload.action === "Venta") {
+        newBalance = state.user.balance - moneyDifference;
       }
-      console.log("Historial antes de entrar al try: ", tempHistory);
 
       try {
         const request = await axios.patch(
-          `https://labor3-d60e.restdb.io/rest/transactions/${historyId}`,
-          tempHistory,
+          `https://labor3-d60e.restdb.io/rest/transactions/${payload.movimentId}`,
+          newMoviment,
           {
             headers: {
               "x-apikey": "64a2e9bc86d8c525a3ed8f63",
@@ -135,18 +161,114 @@ export default {
           }
         );
         if (request.status === 200 || request.status === 201) {
-          commit("setHistory", tempHistory);
+          commit("setBalance", newBalance);
+          dispatch("loadHistory");
         }
       } catch (error) {
         console.log("error en el patch:", error);
       }
     },
 
-    async loadWallet({ commit, state, dispatch }) {
+    async deleteHistory({ dispatch }, movimentId) {
+      try {
+        const request = await axios.delete(
+          `https://labor3-d60e.restdb.io/rest/transactions/${movimentId}`,
+          {
+            headers: {
+              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+            },
+          }
+        );
+        if (request.status === 200 || request.status === 201) {
+          dispatch("loadHistory");
+        }
+      } catch (error) {
+        console.log("error en el patch:", error);
+      }
+    },
+
+    /*  async deleteHistory({ commit, state, dispatch }, movimentId) {
+      var newHistory = state.history;
+
+      for (var key in newHistory) {
+        var moviment = newHistory[key];
+        if (moviment._id === movimentId) {
+          console.log("Movimiento antes de ser eliminado:", newHistory[key]);
+          if (moviment._id !== movimentId) {
+            newHistory[key] = moviment;
+            break;
+          }
+
+          try {
+            const request = await axios.delete(
+              `https://labor3-d60e.restdb.io/rest/transactions/${movimentId}`,
+              {
+                headers: {
+                  "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+                },
+              }
+            );
+            if (request.status === 200 || request.status === 201) {
+              commit("setHistory", newHistory);
+              dispatch("loadHistory");
+            }
+          } catch (error) {
+            console.log("error en el patch:", error);
+          }
+        }
+      }
+    }, */
+
+    async loadPortfolio({ commit, state, dispatch }) {
       await dispatch("loadHistory");
 
-      const tempWallet = {
-        ars: state.wallet.ars,
+      const tempHistory = state.history;
+      var newPortfolio = {};
+
+      for (var key in tempHistory) {
+        var transactions = tempHistory[key];
+        if (transactions.action === "Compra") {
+          if (newPortfolio[transactions.crypto_code]) {
+            newPortfolio[transactions.crypto_code] += parseFloat(
+              transactions.crypto_amount
+            );
+          } else {
+            newPortfolio[transactions.crypto_code] = parseFloat(
+              transactions.crypto_amount
+            );
+          }
+        } else if (transactions.action === "Venta") {
+          if (newPortfolio[transactions.crypto_code]) {
+            newPortfolio[transactions.crypto_code] -= parseFloat(
+              transactions.crypto_amount
+            );
+          }
+        }
+      }
+
+      console.log(newPortfolio);
+
+      commit("setPortfolio", newPortfolio);
+    },
+
+    editBalance({ commit, state }, payload) {
+      var newBalance = parseFloat(state.user.balance);
+      if (payload.action === "deposit") {
+        newBalance += payload.amount;
+      }
+      if (payload.action === "withdraw") {
+        console.log("se entro a la extraccion");
+        newBalance -= payload.amount;
+      }
+      commit("setBalance", newBalance);
+      console.log("Nuevo Balance: ", newBalance);
+    },
+
+    /* async loadWallet({ commit, state, dispatch }) {
+      await dispatch("loadHistory");
+
+      var tempWallet = {
+        ars: state.walle.ars,
         cryptos: {},
       };
 
@@ -177,11 +299,24 @@ export default {
 
       commit("setWallet", tempWallet);
     },
-
-    logOut({ commit }) {
-      commit("setUser", { userName: "", userId: "" });
-      localStorage.removeItem("userName");
-      localStorage.removeItem("userId");
+    depositMoney({ commit, state }, depositAmount) {
+      var newWallet = {
+        ars: parseFloat(state.wallet.ars) + parseFloat(depositAmount),
+        cryptos: state.wallet.cryptos,
+      };
+      commit("setWallet", newWallet);
+      alert("Se ingreso exitosamente: $", depositAmount);
     },
+    withdrawMoney({ commit, state }, withdrawAmount) {
+      if (withdrawAmount <= state.wallet.ars) {
+        var newWallet = {
+          ars: parseFloat(state.wallet.ars) - parseFloat(withdrawAmount),
+          cryptos: state.wallet.cryptos,
+        };
+      }
+      commit("setWallet", newWallet);
+      alert("Se retiro exitosamente: $", withdrawAmount);
+    },
+  }, */
   },
 };

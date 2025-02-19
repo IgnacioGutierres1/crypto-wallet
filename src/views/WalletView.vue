@@ -2,7 +2,7 @@
   <h1>Wallet</h1>
   <div class="main-container">
     <h2>Saldo Actual:</h2>
-    <strong>$ {{ wallet.ars.toLocaleString("es-AR") }}</strong>
+    <strong>$ {{ balance }}</strong>
     <button @click="cargarDatos">Cargar Datos</button>
     <div>
       <h3>Portfolio</h3>
@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(cryptoAmount, crypto) in wallet.cryptos" :key="crypto">
+          <tr v-for="(cryptoAmount, crypto) in portfolio" :key="crypto">
             <td>{{ crypto }}</td>
             <td>{{ cryptoAmount }}</td>
           </tr>
@@ -41,8 +41,17 @@
             <td>$ {{ historyData.money.toLocaleString("es-AR") }}</td>
             <td>{{ historyData.datetime }}</td>
             <td>
-              <a @click="openEditModal(historyData._id)">Editar</a
-              ><a @click="deleteMoviment(historyData._id)">Borrar</a>
+              <a
+                @click="
+                  openEditModal(
+                    historyData._id,
+                    historyData.action,
+                    historyData.crypto_amount,
+                    historyData.money
+                  )
+                "
+                >Editar</a
+              ><a @click="openDeleteModal(historyData._id)">Borrar</a>
             </td>
           </tr>
         </tbody>
@@ -50,9 +59,16 @@
       <div v-if="modalEdit" class="edit-moviment__modal">
         <h3>Editar Movimiento</h3>
         <p>Ingresar monto:</p>
-        <input type="number" v-model="newMount" />
+        <p>{{ eMessage }}</p>
+        <input type="number" v-model="newAmount" />
         <button @click="editMoviment">Aceptar</button>
         <button>Cancelar</button>
+      </div>
+      <div v-if="modalDelete" class="delete-moviment__modal">
+        <h3>Borrar Movimiento</h3>
+        <p>Desea Eliminar el movimiento?</p>
+        <button @click="deleteMoviment">Si</button>
+        <button>No</button>
       </div>
     </div>
   </div>
@@ -65,32 +81,62 @@ export default {
   data() {
     return {
       modalEdit: false,
+      eMessage: "",
+      action: "",
+      modalDelete: false,
       movimentId: "",
-      newMount: "",
+      newAmount: 0,
+      originalCryptoAmount: 0,
+      originalMoneyAmount: 0,
     };
   },
   methods: {
-    ...mapActions("user", ["loadWallet", "editHistory"]),
+    ...mapActions("user", ["loadPortfolio", "editHistory", "deleteHistory"]),
     cargarDatos() {
-      this.loadWallet();
+      this.loadPortfolio();
     },
-    openEditModal(movimentId) {
+    openEditModal(
+      movimentId,
+      action,
+      pOriginalCryptoAmount,
+      pOriginalMoneyAmount
+    ) {
       this.modalEdit = !this.modalEdit;
       this.movimentId = movimentId;
+      this.action = action;
+      this.originalCryptoAmount = pOriginalCryptoAmount;
+      this.originalMoneyAmount = pOriginalMoneyAmount;
+      console.log("monto", this.originalMoneyAmount);
     },
     editMoviment() {
-      if (this.newMount > 0) {
-        console.log("Id y Nuevo monto", this.movimentId, this.newMount);
-        this.editHistory({
-          movimentId: this.movimentId,
-          newMount: this.newMount,
-        });
+      if (this.newAmount > 0) {
+        if (
+          this.action === "Compra" &&
+          this.newAmount < this.originalMoneyAmount
+        ) {
+          this.editHistory({
+            movimentId: this.movimentId,
+            originalCryptoAmount: this.originalCryptoAmount,
+            originalMoneyAmount: this.originalMoneyAmount,
+            newAmount: this.newAmount,
+            action: this.action,
+          });
+        } else {
+          this.eMessage = "El monto para editar una compra debe ser menor";
+        }
       }
     },
-    /* deleteMoviment(movimentId) {}, */
+    openDeleteModal(movimentId) {
+      this.modalDelete = !this.modalDelete;
+      this.movimentId = movimentId;
+    },
+    deleteMoviment() {
+      console.log("Id a eliminar:", this.movimentId);
+      this.deleteHistory(this.movimentId);
+    },
   },
   computed: {
-    ...mapGetters("user", ["history", "wallet"]),
+    ...mapGetters("user", ["history", "balance", "portfolio"]),
   },
 };
 </script>
