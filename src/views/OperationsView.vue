@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import axios from "axios";
+/* import axios from "axios"; */
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -88,7 +88,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions("cryptostore", ["fetchCryptos", "postOperation"]),
+    ...mapActions("cryptostore", ["fetchCryptos"]),
+    ...mapActions("user", ["postOperation"]),
     convertPrice(defaultPrice) {
       if (defaultPrice) {
         return "$ " + defaultPrice.toLocaleString("es-AR");
@@ -122,21 +123,21 @@ export default {
       }
 
       if (this.moneyCheck() <= this.balance) {
-        const request = {
-          userId: this.getUserId,
-          action: "purchase",
-          coin: this.selectedCoin,
-          amount: this.cryptoQuantity(),
-          money: this.moneyCheck(),
-          datetime: new Date().toISOString(),
-          operacion: "Compra",
-        };
-        console.log("Datos Enviados", request);
-
         try {
-          this.postOperation(request);
+          const response = this.postOperation({
+            userId: this.getUserId,
+            action: "purchase",
+            coin: this.selectedCoin,
+            amount: this.cryptoQuantity(),
+            money: this.moneyCheck(),
+            datetime: new Date().toISOString(),
+            operation: "Compra",
+          });
+          if (response.status === 201 || response.status === 200) {
+            console.log("Operacion exitosa despues del POST");
+          }
         } catch (error) {
-          alert("Error en la Compra");
+          console.log("Ocurrio un error en la operacion");
         }
       }
     },
@@ -147,28 +148,26 @@ export default {
       }
 
       if (this.cryptoQuantity() < this.portfolio[this.selectedCoin]) {
-        const request = {
-          userId: this.getUserId,
-          action: "sale",
-          coin: this.selectedCoin,
-          amount: this.cryptoQuantity(),
-          money: this.moneyCheck(),
-          datetime: new Date().toISOString(),
-          operacion: "Venta",
-        };
-        console.log("Datos Enviados", request);
-
         try {
-          this.postOperation(request);
+          const response = this.postOperation({
+            userId: this.getUserId,
+            action: "sale",
+            coin: this.selectedCoin,
+            amount: this.cryptoQuantity(),
+            money: this.moneyCheck(),
+            datetime: new Date().toISOString(),
+            operation: "Venta",
+          });
+          if (response.status === 201 || response.status === 200) {
+            console.log("Operacion exitosa despues del POST");
+          }
         } catch (error) {
-          alert("Error en la Compra");
+          console.log("Ocurrio un error en la operacion");
         }
-      } else {
-        alert("El monto supera lo que posee");
       }
     },
 
-    async postOperation(request) {
+    /*  async postOperation(request) {
       console.log("Objeto antes de data", request);
       const postRequestData = {
         user_id: request.userId,
@@ -198,7 +197,7 @@ export default {
         console.error("Error en el post", error);
         alert(`Error en la ${request.operacion} `);
       }
-    },
+    }, */
 
     closeModal() {
       this.coinClicked = false;

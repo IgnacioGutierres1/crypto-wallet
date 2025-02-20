@@ -11,12 +11,19 @@
           <tr>
             <th>Criptomoneda</th>
             <th>Cantidad</th>
+            <th>Balance Actual en ARS</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(cryptoAmount, crypto) in portfolio" :key="crypto">
             <td>{{ crypto }}</td>
             <td>{{ cryptoAmount }}</td>
+            <td>$ {{ updatePortfolioBalance(cryptoAmount, crypto) }}</td>
+          </tr>
+          <tr>
+            <td><strong>Total</strong></td>
+            <td></td>
+            <td>$ {{ totalPortfolioBalance }}</td>
           </tr>
         </tbody>
       </table>
@@ -92,9 +99,18 @@ export default {
   },
   methods: {
     ...mapActions("user", ["loadPortfolio", "editHistory", "deleteHistory"]),
+    /* ...mapActions("cryptostore", ["updatePortfolioBalance"]), */
     cargarDatos() {
       this.loadPortfolio();
     },
+    /*  async portfolioCoinBalance(crypto_amount, coin) {
+      const coinBalance = await this.updatePortfolioBalance({
+        crypto_amount: crypto_amount,
+        coin: coin,
+      });
+      console.log("resultado de la accion de coin balance: ", coinBalance);
+      return coinBalance;
+    }, */
     openEditModal(
       movimentId,
       action,
@@ -137,11 +153,19 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["history", "balance", "portfolio"]),
+    ...mapGetters("cryptostore", [
+      "updatePortfolioBalance",
+      "totalPortfolioBalance",
+    ]),
   },
 };
 </script>
 
 <style scoped>
+body {
+  overflow-y: auto;
+}
+
 a {
   cursor: pointer;
 }

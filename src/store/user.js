@@ -45,12 +45,15 @@ export default {
       localStorage.setItem("user", JSON.stringify(state.user));
     },
     setPortfolio(state, { crypto, amount }) {
-      if(!state.user.portfolio[crypto]) {
+      if (!state.user.portfolio[crypto]) {
         state.user.portfolio[crypto] = amount;
       } else {
         state.user.portfolio[crypto] = state.user.portfolio[crypto] + amount;
-      };
-      if(state.user.portfolio[crypto] === 0) {
+      }
+      if (
+        state.user.portfolio[crypto] === 0 ||
+        state.user.portfolio[crypto] === undefined
+      ) {
         delete state.user.portfolio[crypto];
       }
       localStorage.setItem("user", JSON.stringify(state.user));
@@ -97,6 +100,60 @@ export default {
         portfolio: {},
       });
       localStorage.removeItem("user");
+    },
+
+    async postOperation({ commit, state }, payload) {
+      console.log("Objeto antes de data", payload);
+      var newBalance;
+      const postRequestData = {
+        user_id: payload.userId,
+        action: payload.action,
+        crypto_code: payload.coin,
+        crypto_amount: payload.amount,
+        money: payload.money,
+        datetime: payload.datetime,
+      };
+      console.log("Objeto Recibido: ", postRequestData);
+      try {
+        const apiClient = await axios.post(
+          "https://labor3-d60e.restdb.io/rest/transactions",
+          postRequestData,
+          {
+            headers: {
+              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+            },
+          }
+        );
+        console.log("respuesta de la api:", apiClient);
+        if (apiClient.status === 200 || apiClient.status == 201) {
+          if (payload.operation === "Compra") {
+            newBalance = state.user.balance;
+            newBalance -= postRequestData.money;
+            console.log("Nuevo Balance", newBalance);
+            commit("setBalance", newBalance);
+            commit("setPortfolio", {
+              crypto: postRequestData.crypto_code,
+              amount: parseFloat(postRequestData.crypto_amount),
+            });
+          } else if (payload.operation === "Venta") {
+            newBalance = state.user.balance;
+            newBalance += postRequestData.money;
+            console.log("Nuevo Balance", newBalance);
+            commit("setBalance", newBalance);
+            commit("setPortfolio", {
+              crypto: postRequestData.crypto_code,
+              amount: parseFloat(
+                -postRequestData.crypto_amount
+              ) /* Menos para que se reste */,
+            });
+          }
+          alert(`${payload.operation} Exitosa`);
+          return apiClient.data;
+        }
+      } catch (error) {
+        console.error("Error en el post", error);
+        alert(`Error en la ${payload.operation} `);
+      }
     },
 
     async loadHistory({ commit, state }) {
