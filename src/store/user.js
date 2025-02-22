@@ -303,25 +303,26 @@ export default {
         }
       }
 
-      console.log(newPortfolio);
+      console.log("Portfolio: ", newPortfolio);
 
       commit("setPortfolio", newPortfolio);
     },
+  },
 
-    editBalance({ commit, state }, payload) {
-      var newBalance = parseFloat(state.user.balance);
-      if (payload.action === "deposit") {
-        newBalance += payload.amount;
-      }
-      if (payload.action === "withdraw") {
-        console.log("se entro a la extraccion");
-        newBalance -= payload.amount;
-      }
-      commit("setBalance", newBalance);
-      console.log("Nuevo Balance: ", newBalance);
-    },
+  editBalance({ commit, state }, payload) {
+    var newBalance = parseFloat(state.user.balance);
+    if (payload.action === "deposit") {
+      newBalance += payload.amount;
+    }
+    if (payload.action === "withdraw") {
+      console.log("se entro a la extraccion");
+      newBalance -= payload.amount;
+    }
+    commit("setBalance", newBalance);
+    console.log("Nuevo Balance: ", newBalance);
+  },
 
-    /* async loadWallet({ commit, state, dispatch }) {
+  /* async loadWallet({ commit, state, dispatch }) {
       await dispatch("loadHistory");
 
       var tempWallet = {
@@ -375,5 +376,4 @@ export default {
       alert("Se retiro exitosamente: $", withdrawAmount);
     },
   }, */
-  },
 };

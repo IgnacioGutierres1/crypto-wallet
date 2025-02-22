@@ -3,7 +3,6 @@
   <div class="main-container">
     <h2>Saldo Actual:</h2>
     <strong>$ {{ balance }}</strong>
-    <button @click="cargarDatos">Cargar Datos</button>
     <div>
       <h3>Portfolio</h3>
       <table>
@@ -18,12 +17,29 @@
           <tr v-for="(cryptoAmount, crypto) in portfolio" :key="crypto">
             <td>{{ crypto }}</td>
             <td>{{ cryptoAmount }}</td>
-            <td>$ {{ updatePortfolioBalance(cryptoAmount, crypto) }}</td>
+            <td>$ {{ updateBalance(cryptoAmount, crypto) }}</td>
           </tr>
           <tr>
             <td><strong>Total</strong></td>
             <td></td>
             <td>$ {{ totalPortfolioBalance }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Analisis de Inversiones</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Criptomoneda</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(result, coin) in investmentsAnalysis" :key="coin">
+            <td>{{ coin }}</td>
+            <td>$ {{ result }}</td>
           </tr>
         </tbody>
       </table>
@@ -99,18 +115,6 @@ export default {
   },
   methods: {
     ...mapActions("user", ["loadPortfolio", "editHistory", "deleteHistory"]),
-    /* ...mapActions("cryptostore", ["updatePortfolioBalance"]), */
-    cargarDatos() {
-      this.loadPortfolio();
-    },
-    /*  async portfolioCoinBalance(crypto_amount, coin) {
-      const coinBalance = await this.updatePortfolioBalance({
-        crypto_amount: crypto_amount,
-        coin: coin,
-      });
-      console.log("resultado de la accion de coin balance: ", coinBalance);
-      return coinBalance;
-    }, */
     openEditModal(
       movimentId,
       action,
@@ -154,9 +158,13 @@ export default {
   computed: {
     ...mapGetters("user", ["history", "balance", "portfolio"]),
     ...mapGetters("cryptostore", [
-      "updatePortfolioBalance",
+      "updateBalance",
       "totalPortfolioBalance",
+      "investmentsAnalysis",
     ]),
+  },
+  async mounted() {
+    this.loadPortfolio();
   },
 };
 </script>

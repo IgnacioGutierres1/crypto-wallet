@@ -12,26 +12,62 @@ export default {
     exchanges(state) {
       return Object.keys(state.cryptos);
     },
-    updatePortfolioBalance(state) {
+    updateBalance(state) {
       return function (crypto_amount, coin) {
-        const portfolioBalance =
+        const newBalance =
           parseFloat(crypto_amount) *
           parseFloat(state.cryptos["ripio"][coin].price);
-        return portfolioBalance;
+        return newBalance;
       };
     },
     totalPortfolioBalance(state, getters, rootState) {
       var total = 0;
 
       for (var coin in rootState.user.user.portfolio) {
-        total += getters.updatePortfolioBalance(
+        total += getters.updateBalance(
           rootState.user.user.portfolio[coin],
           coin
         );
-        /* parseFloat(rootState.user.user.portfolio[coin]) *
-          parseFloat(state.cryptos["ripio"][coin].price); */
       }
       return total;
+    },
+    investmentsAnalysis(state, getters, rootState) {
+      var operationsResults = {};
+
+      for (var key in rootState.user.history) {
+        const transaction = rootState.user.history[key];
+        const coin = transaction.crypto_code;
+        if (!operationsResults[coin]) {
+          operationsResults[coin] = {
+            totalPurchase: 0,
+            totalSale: 0,
+            currentValue: 0,
+          };
+        }
+        if (transaction.action === "Compra") {
+          operationsResults[coin].totalPurchase += transaction.money;
+        } else if (transaction.action === "Venta") {
+          operationsResults[coin].totalSale += transaction.money;
+        }
+      }
+      for (var coin in rootState.user.user.portfolio) {
+        const coinAmount = rootState.user.user.portfolio[coin];
+        const currentValue = getters.updateBalance(
+          coinAmount,
+          coin
+        );
+
+        if (operationsResults[coin]) {
+          operationsResults[coin].currentValue = currentValue;
+        }
+      }
+      var totalAnalysis = {};
+      for (var coinI in operationsResults) {
+        const result = operationsResults[coinI];
+        totalAnalysis[coinI] =
+          result.totalSale + result.currentValue - result.totalPurchase;
+      }
+      return totalAnalysis;
     },
   },
   mutations: {
@@ -72,41 +108,5 @@ export default {
         console.error("Error en fetchCryptos:", error);
       }
     },
-    /* async updatePortfolioBalance({ state, dispatch }, payload) {
-      await dispatch("fetchCryptos");
-      const portfolioBalance =
-        parseFloat(payload.crypto_amount) *
-        parseFloat(state.cryptos["ripio"][payload.coin].price);
-      return portfolioBalance;
-    }, */
-    /* async fetchCryptos({ commit }) {
-      let cryptoData = {};
-      let coins = ["BTC", "ETH", "USDT", "USDC", "DAI", "UXD"];
-      let exchanges = ["binance", "bybit", "satoshitango", "ripio"];
-
-      try {
-        let promises = [];
-        for (const exchange of exchanges) {
-          cryptoData[exchange] = {};
-          for (const coin of coins) {
-            let request = axios
-              .get(`https://criptoya.com/api/${exchange}/${coin}/ARS`)
-              .then((response) => {
-                cryptoData[exchange][coin] = { price: response.data.totalBid };
-              })
-              .catch((error) => {
-                console.warn(`Error obteniendo ${coin} en ${exchange}:`, error);
-                delete cryptoData[exchange][coin];
-              });
-
-            promises.push(request);
-          }
-        }
-        await Promise.all(promises);
-        commit("setCryptos", cryptoData);
-      } catch (error) {
-        console.error("Error en fetchCryptos:", error);
-      }
-      }, */
   },
 };
