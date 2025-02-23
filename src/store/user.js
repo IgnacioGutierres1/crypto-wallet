@@ -66,6 +66,7 @@ export default {
     saveUser({ commit, state }, userName) {
       var tempUsers = localStorage.getItem("users");
       var usersSaved = {};
+      var msg = "";
 
       if (tempUsers !== null) {
         usersSaved = JSON.parse(tempUsers);
@@ -78,7 +79,7 @@ export default {
           balance: state.user.balance || 0,
           portfolio: state.user.portfolio || {},
         });
-        alert("usuario encontrado");
+        msg = "Usuario Encontrado ✅";
       } else {
         const alphanumericId = Math.random().toString(36).slice(2, 12);
         usersSaved[userName] = alphanumericId;
@@ -89,7 +90,9 @@ export default {
           balance: 0,
           portfolio: {},
         });
+        msg = "Se ha iniciado sesión ✅";
       }
+      return msg;
     },
 
     logOut({ commit }) {
@@ -244,38 +247,6 @@ export default {
       }
     },
 
-    /*  async deleteHistory({ commit, state, dispatch }, movimentId) {
-      var newHistory = state.history;
-
-      for (var key in newHistory) {
-        var moviment = newHistory[key];
-        if (moviment._id === movimentId) {
-          console.log("Movimiento antes de ser eliminado:", newHistory[key]);
-          if (moviment._id !== movimentId) {
-            newHistory[key] = moviment;
-            break;
-          }
-
-          try {
-            const request = await axios.delete(
-              `https://labor3-d60e.restdb.io/rest/transactions/${movimentId}`,
-              {
-                headers: {
-                  "x-apikey": "64a2e9bc86d8c525a3ed8f63",
-                },
-              }
-            );
-            if (request.status === 200 || request.status === 201) {
-              commit("setHistory", newHistory);
-              dispatch("loadHistory");
-            }
-          } catch (error) {
-            console.log("error en el patch:", error);
-          }
-        }
-      }
-    }, */
-
     async loadPortfolio({ commit, state, dispatch }) {
       await dispatch("loadHistory");
 
@@ -307,73 +278,21 @@ export default {
 
       commit("setPortfolio", newPortfolio);
     },
-  },
 
-  editBalance({ commit, state }, payload) {
-    var newBalance = parseFloat(state.user.balance);
-    if (payload.action === "deposit") {
-      newBalance += payload.amount;
-    }
-    if (payload.action === "withdraw") {
-      console.log("se entro a la extraccion");
-      newBalance -= payload.amount;
-    }
-    commit("setBalance", newBalance);
-    console.log("Nuevo Balance: ", newBalance);
-  },
-
-  /* async loadWallet({ commit, state, dispatch }) {
-      await dispatch("loadHistory");
-
-      var tempWallet = {
-        ars: state.walle.ars,
-        cryptos: {},
-      };
-
-      for (const transactions of state.history) {
-        if (transactions.action === "Compra") {
-          tempWallet.ars -= parseFloat(transactions.money);
-          if (tempWallet.cryptos[transactions.crypto_code]) {
-            tempWallet.cryptos[transactions.crypto_code] += parseFloat(
-              transactions.crypto_amount
-            );
-          } else {
-            tempWallet.cryptos[transactions.crypto_code] = parseFloat(
-              transactions.crypto_amount
-            );
-          }
-        } else if (transactions.action === "Venta") {
-          tempWallet.ars += parseFloat(transactions.money);
-
-          if (tempWallet.cryptos[transactions.crypto_code]) {
-            tempWallet.cryptos[transactions.crypto_code] -= parseFloat(
-              transactions.crypto_amount
-            );
-          }
-        }
+    editBalance({ commit, state }, payload) {
+      var newBalance = parseFloat(state.user.balance);
+      var msg = "";
+      if (payload.action === "deposit") {
+        newBalance += payload.amount;
+        msg = `Se ingreso correctamente $${payload.amount} ✅`;
       }
-
-      console.log(tempWallet);
-
-      commit("setWallet", tempWallet);
-    },
-    depositMoney({ commit, state }, depositAmount) {
-      var newWallet = {
-        ars: parseFloat(state.wallet.ars) + parseFloat(depositAmount),
-        cryptos: state.wallet.cryptos,
-      };
-      commit("setWallet", newWallet);
-      alert("Se ingreso exitosamente: $", depositAmount);
-    },
-    withdrawMoney({ commit, state }, withdrawAmount) {
-      if (withdrawAmount <= state.wallet.ars) {
-        var newWallet = {
-          ars: parseFloat(state.wallet.ars) - parseFloat(withdrawAmount),
-          cryptos: state.wallet.cryptos,
-        };
+      if (payload.action === "withdraw") {
+        newBalance -= payload.amount;
+        msg = `Se extrajo correctamente $${payload.amount} ✅`;
       }
-      commit("setWallet", newWallet);
-      alert("Se retiro exitosamente: $", withdrawAmount);
+      commit("setBalance", newBalance);
+      console.log("Nuevo Balance: ", newBalance);
+      return msg;
     },
-  }, */
+  },
 };

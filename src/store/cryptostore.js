@@ -52,10 +52,7 @@ export default {
       }
       for (var coin in rootState.user.user.portfolio) {
         const coinAmount = rootState.user.user.portfolio[coin];
-        const currentValue = getters.updateBalance(
-          coinAmount,
-          coin
-        );
+        const currentValue = getters.updateBalance(coinAmount, coin);
 
         if (operationsResults[coin]) {
           operationsResults[coin].currentValue = currentValue;

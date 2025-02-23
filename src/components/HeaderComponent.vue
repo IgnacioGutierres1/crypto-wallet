@@ -55,6 +55,7 @@ export default {
     },
     logOutSession() {
       this.logOut();
+      this.selectedAvatar = !this.selectedAvatar;
     },
   },
   computed: {
@@ -66,7 +67,7 @@ export default {
 /* --- Header Main Styles Section Section --- */
 .header-container {
   display: grid;
-  margin: 10px 10px 50px 10px;
+  margin: 10px 10px 30px 10px;
   padding: 0 5px;
   border-radius: 10px;
   grid-template-columns: 1fr auto 1fr;
