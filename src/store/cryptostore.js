@@ -18,7 +18,7 @@ export default {
           parseFloat(crypto_amount) *
           parseFloat(state.cryptos["ripio"][coin].price);
 
-        return newBalance;
+        return parseFloat(newBalance);
       };
     },
     totalPortfolioBalance(state, getters, rootState) {
@@ -65,7 +65,9 @@ export default {
         totalAnalysis[coinI] =
           result.totalSale + result.currentValue - result.totalPurchase;
         if (totalAnalysis[coinI] > 0) {
-          totalAnalysis[coinI] = "+" + totalAnalysis[coinI];
+          totalAnalysis[coinI] =
+            "+" +
+            parseFloat(totalAnalysis[coinI].toFixed(2)).toLocaleString("es-AR");
         }
       }
       return totalAnalysis;

@@ -2,7 +2,10 @@
   <!-- Wallet View Section -->
   <div class="wallet-view">
     <h1 class="wallet-view__title">Wallet</h1>
-    <h3 class="wallet-view__balance">Saldo Actual: $ {{ balance }}</h3>
+    <h3 class="wallet-view__balance">
+      Saldo Actual: $
+      {{ parseFloat(balance.toFixed(2)).toLocaleString("es-AR") }}
+    </h3>
 
     <!-- Portfolio Section -->
 
@@ -25,15 +28,29 @@
             <td class="wallet-view__portfolio-cell">{{ crypto }}</td>
             <td class="wallet-view__portfolio-cell">{{ cryptoAmount }}</td>
             <td class="wallet-view__portfolio-cell">
-              $ {{ updateBalance(cryptoAmount, crypto) }}
+              $
+              {{
+                parseFloat(
+                  updateBalance(cryptoAmount, crypto).toFixed(2)
+                ).toLocaleString("es-AR")
+              }}
             </td>
           </tr>
+        </tbody>
+        <tfoot>
           <tr class="portfolio-row-total">
             <td class="wallet-view__portfolio-cell"><strong>Total</strong></td>
             <td class="wallet-view__portfolio-cell"></td>
-            <td class="wallet-view__portfolio-cell">$ {{ totalPortfolioBalance }}</td>
+            <td class="wallet-view__portfolio-cell">
+              $
+              {{
+                parseFloat(totalPortfolioBalance.toFixed(2)).toLocaleString(
+                  "es-AR"
+                )
+              }}
+            </td>
           </tr>
-        </tbody>
+        </tfoot>
       </table>
     </div>
 
@@ -86,13 +103,19 @@
             v-for="(historyData, history) in history"
             :key="history"
           >
-            <td class="wallet-view__history-cell">{{ historyData.crypto_code }}</td>
+            <td class="wallet-view__history-cell">
+              {{ historyData.crypto_code }}
+            </td>
             <td class="wallet-view__history-cell">{{ historyData.action }}</td>
-            <td class="wallet-view__history-cell">{{ historyData.crypto_amount }}</td>
+            <td class="wallet-view__history-cell">
+              {{ historyData.crypto_amount }}
+            </td>
             <td class="wallet-view__history-cell">
               $ {{ historyData.money.toLocaleString("es-AR") }}
             </td>
-            <td class="wallet-view__history-cell">{{ historyData.datetime }}</td>
+            <td class="wallet-view__history-cell">
+              {{ historyData.datetime }}
+            </td>
             <td class="wallet-view__history-cell">
               <button
                 class="wallet-view__history-button"
@@ -123,14 +146,23 @@
     <!-- Edit Moviment Modal Section -->
 
     <div v-if="modalEdit" class="wallet-view__editmodal">
-      <a class="wallet-view__editmodal-closebutton" @click="openCloseModal('edit')">X</a>
+      <a
+        class="wallet-view__editmodal-closebutton"
+        @click="openCloseModal('edit')"
+        >X</a
+      >
       <h3 class="wallet-view__editmodal-title">Editar Movimiento</h3>
       <p>Ingresar monto:</p>
       <p>{{ message }}</p>
       <input type="number" v-model="newAmount" />
       <div class="wallet-view__editmodal-buttons">
-        <button class="wallet-view__editmodal-button" @click="editMoviment">Aceptar</button>
-        <button class="wallet-view__editmodal-button" @click="openCloseModal('edit')">
+        <button class="wallet-view__editmodal-button" @click="editMoviment">
+          Aceptar
+        </button>
+        <button
+          class="wallet-view__editmodal-button"
+          @click="openCloseModal('edit')"
+        >
           Cancelar
         </button>
       </div>
@@ -141,13 +173,22 @@
     <!-- Delete Moviment Modal Section -->
 
     <div v-if="modalDelete" class="wallet-view__deletemodal">
-      <a class="wallet-view__deletemodal-closebutton" @click="openCloseModal('delete')">X</a>
+      <a
+        class="wallet-view__deletemodal-closebutton"
+        @click="openCloseModal('delete')"
+        >X</a
+      >
       <h3 class="wallet-view__deletemodal-title">Borrar Movimiento</h3>
       <p>Desea Eliminar el movimiento?</p>
       <p>{{ message }}</p>
       <div class="wallet-view__deletemodal-buttons">
-        <button class="wallet-view__deletemodal-button" @click="deleteMoviment">Si</button>
-        <button class="wallet-view__deletemodal-button" @click="openCloseModal('delete')">
+        <button class="wallet-view__deletemodal-button" @click="deleteMoviment">
+          Si
+        </button>
+        <button
+          class="wallet-view__deletemodal-button"
+          @click="openCloseModal('delete')"
+        >
           No
         </button>
       </div>
@@ -240,7 +281,7 @@ export default {
 </script>
 
 <style scoped>
-/* --- Wallet Main Styles --- */
+/* --- Wallet Styles --- */
 
 .wallet-view {
   display: flex;
@@ -271,7 +312,7 @@ export default {
   margin: 20px 0;
 }
 
-/* --- Wallet Main Styles ENDS --- */
+/* --- Wallet Styles ENDS --- */
 
 /* --- Portfolio Styles --- */
 
@@ -303,6 +344,10 @@ export default {
 
 .wallet-view__portfolio-cell {
   padding: 5px;
+}
+
+.portfolio-row-total {
+  border-top: 1px solid black;
 }
 
 /* --- Portfolio Styles ENDS --- */

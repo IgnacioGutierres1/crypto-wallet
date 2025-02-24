@@ -1,12 +1,19 @@
 <template>
-  <!-- Main Container -->
+  <!-- Operations View Section -->
+
   <div class="operations-view">
     <h1 class="operations-view__title">Compra y Venta de CryptoActivos</h1>
-    <!-- Coin Container -->
-    <div class="coin-container">
-      <!-- Exchanges Select -->
+
+    <!-- Coins Section -->
+
+    <div class="operations-view__coins">
+      <!-- Exchanges Select Section -->
+
       <div>
-        <select class="coin-container__select" v-model="selectedExchange">
+        <select
+          class="operations-view__coins-select"
+          v-model="selectedExchange"
+        >
           <option
             v-for="exchange in exchanges"
             :key="exchange"
@@ -16,36 +23,46 @@
           </option>
         </select>
       </div>
-      <!-- Exchanges Select ENDS -->
-      <!-- Coin Table Container -->
-      <table class="coin-container__table" v-if="selectedExchange">
+      <!-- Exchanges Select Section ENDS -->
+
+      <!-- Coins Table Section -->
+
+      <table class="operations-view__coins-table" v-if="selectedExchange">
         <thead>
           <tr>
-            <th class="coin-container__table--th">Criptomoneda</th>
-            <th class="coin-container__table--th">Precio (ARS)</th>
+            <th class="operations-view__coins-column-header">Criptomoneda</th>
+            <th class="operations-view__coins-column-header">Precio (ARS)</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            class="coin-container__table--trcoins"
+            class="coins-row"
             v-for="(coinData, coin) in cryptos[selectedExchange]"
             :key="coin"
             @click="openModal(coin, coinData.price)"
           >
-            <td class="coin-container__table--td">{{ coin }}</td>
-            <td class="coin-container__table--td">
+            <td class="operations-view__coins-cell">{{ coin }}</td>
+            <td class="operations-view__coins-cell">
               {{ convertPrice(coinData.price) }}
             </td>
           </tr>
         </tbody>
       </table>
-      <!-- Coin Table Container ENDS -->
-      <!-- Coin Modal Window -->
-      <div v-if="coinClicked" class="coin-container__modal">
-        <a @click="closeModal" class="coin-container__modal--closebutton">X</a>
+
+      <!-- Coins Table Section ENDS -->
+
+      <!-- Coins Modal Section -->
+
+      <div v-if="coinClicked" class="operations-view__coinsmodal">
+        <a @click="closeModal" class="operations-view__coinsmodal-closebutton"
+          >X</a
+        >
         <h2>{{ selectedCoin }}</h2>
         <p>Precio: {{ convertPrice(selectedPrice) }}</p>
-        <p>Dinero disponible: {{ balance }}</p>
+        <p>
+          Dinero disponible: $
+          {{ parseFloat(balance.toFixed(2)).toLocaleString("es-AR") }}
+        </p>
         <p>
           Cantidad de {{ selectedCoin }} disponible:
           {{ portfolio[selectedCoin] }}
@@ -56,24 +73,28 @@
           placeholder="Monto a gastar"
           step="0.01"
         />
-        <p>Cantidad de {{ selectedCoin }}: {{ cryptoQuantity() }}</p>
-        <div class="coin-container__modal--buttons">
-          <button class="coin-container__modal--button" @click="buy">
+        <p>
+          Cantidad de {{ selectedCoin }}:
+          {{ cryptoQuantity() }}
+        </p>
+        <div class="operations-view__coinsmodal-buttons">
+          <button class="operations-view__coinsmodal-button" @click="buy">
             Comprar
           </button>
-          <button class="coin-container__modal--button" @click="sell">
+          <button class="operations-view__coinsmodal-button" @click="sell">
             Vender
           </button>
         </div>
       </div>
-      <!-- Coin Modal Window ENDS -->
+
+      <!-- Coins Modal Section ENDS -->
     </div>
   </div>
-  <!-- Main Container ENDS -->
+
+  <!-- Operation View Section ENDS -->
 </template>
 
 <script>
-/* import axios from "axios"; */
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -104,10 +125,10 @@ export default {
     },
 
     cryptoQuantity() {
-      if (this.moneyCheck() !== null) {
-        return this.moneyCheck() / this.selectedPrice;
+      if (this.moneyCheck() !== null && !isNaN(this.moneyCheck())) {
+        return parseFloat(this.moneyCheck() / this.selectedPrice).toFixed(22);
       } else {
-        return 0;
+        return "";
       }
     },
 
@@ -195,7 +216,8 @@ export default {
 </script>
 
 <style scoped>
-/* --- Operations Main Styles Section --- */
+/* --- Operations View Styles --- */
+
 .operations-view {
   display: flex;
   width: 80vw;
@@ -203,10 +225,26 @@ export default {
   margin: 0 auto;
   flex-direction: column;
 }
-/* --- Operations Main Styles Section ENDS --- */
 
-/* --- Coin Container Styles Section --- */
-.coin-container {
+.operations-view__title {
+  align-self: center;
+  padding-bottom: 20px;
+  margin-bottom: 15px;
+  width: 100%;
+  border-bottom: 5px solid;
+  border-image-source: linear-gradient(
+    to right,
+    transparent 0%,
+    #0009 50%,
+    transparent 100%
+  );
+  border-image-slice: 1;
+}
+/* --- Operations View Styles ENDS --- */
+
+/* --- Coins Styles --- */
+
+.operations-view__coins {
   display: flex;
   margin: 15px;
   min-height: 60vh;
@@ -215,9 +253,10 @@ export default {
   justify-content: center;
   position: relative;
 }
-/* --- Exchanges Select Styles Section --- */
 
-.coin-container__select {
+/* --- Exchanges Select Styles --- */
+
+.operations-view__coins-select {
   margin: 5px;
   padding: 5px;
   position: absolute;
@@ -225,36 +264,38 @@ export default {
   left: 215px;
 }
 
-/* --- Exchanges Select Styles Section --- */
+/* --- Exchanges Select Styles ENDS --- */
 
-/* --- Coin Table Styles Section --- */
+/* --- Coins Table Styles --- */
 
-.coin-container__table {
+.operations-view__coins-table {
   width: 60%;
   margin: 10px;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
-.coin-container__table--th {
+.operations-view__coins-column-header {
   padding: 8px 10px;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
 
-.coin-container__table--td {
+.coins-row:hover {
+  background-color: #0001;
+  cursor: pointer;
+}
+
+.operations-view__coins-cell {
   padding: 12px 5px;
   border-bottom: 1px solid black;
 }
 
-.coin-container__table--trcoins:hover {
-  background-color: #0001;
-  cursor: pointer;
-}
-/* --- Coin Table Styles Section ENDS--- */
+/* --- Coins Table Styles ENDS--- */
 
-/* --- Modal Styles Section --- */
-.coin-container__modal {
+/* --- Coins Modal Styles --- */
+
+.operations-view__coinsmodal {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -267,12 +308,7 @@ export default {
   border-radius: 10px;
 }
 
-.coin-container__modal--button {
-  margin: 10px;
-  padding: 8px 5px;
-}
-
-.coin-container__modal--closebutton {
+.operations-view__coinsmodal-closebutton {
   position: absolute;
   top: 0;
   right: 0;
@@ -280,5 +316,17 @@ export default {
   cursor: pointer;
 }
 
-/* --- Coin Container Styles Section ENDS --- */
+.operations-view__coinsmodal-button {
+  margin: 5px;
+  padding: 10px 8px;
+  border-radius: 4px;
+  border-style: none;
+  color: #fffe;
+  background-color: #1f2d5a;
+  cursor: pointer;
+}
+
+/* --- Coins Modal Styles ENDS --- */
+
+/* --- Coins Styles ENDS --- */
 </style>

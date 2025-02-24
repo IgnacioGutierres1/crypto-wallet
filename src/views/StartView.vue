@@ -1,59 +1,79 @@
 <template>
-  <!-- Main Container -->
+  <!-- Start View Section -->
+
   <div class="start-view">
-    <!-- LogIn Modal Container -->
-    <div v-if="!login" class="main-container__login-modal">
-      <div class="login-modal__header">
-        <h1 class="login-modal__title">Crypto Wallet</h1>
+    <!-- LogIn Modal Section -->
+
+    <div v-if="!login" class="start-view__login-modal">
+      <div class="start-view__login-modal-header">
+        <h1 class="start-view__login-modal-title">Crypto Wallet</h1>
       </div>
-      <div class="login-modal__content">
-        <h2 class="login-modal__subtitle">Inicio de Sesión</h2>
-        <div class="login-modal__form-container">
-          <form @submit.prevent="sendLogin" class="login-modal__form">
+      <div class="start-view__login-modal-content">
+        <h2 class="start-view__login-modal-subtitle">Inicio de Sesión</h2>
+        <div class="start-view__login-modal-form-container">
+          <form
+            @submit.prevent="sendLogin"
+            class="start-view__login-modal-form"
+          >
             <input
-              class="login-modal__input"
+              class="start-view__login-modal-input"
               type="text"
               placeholder="Ingrese su UserName"
               v-model="logUserName"
               required
             />
-            <button class="login-modal__button" type="submit">
+            <button class="start-view__login-modal-button" type="submit">
               Obtenga su ID
             </button>
           </form>
         </div>
       </div>
     </div>
-    <!-- User Info Modal Container -->
-    <div v-if="userLoginModal" class="login-modal__userinfo">
-      <a @click="closeUserModal" class="login-modal__userinfo--closebutton"
+
+    <!-- LogIn Modal Section ENDS -->
+
+    <!-- User Info Modal Section -->
+
+    <div v-if="userLoginModal" class="start-view__login-modal-userinfo">
+      <a
+        @click="closeUserModal"
+        class="start-view__login-modal-userinfo-closebutton"
         >X</a
       >
       <p>{{ message }}</p>
       <p>Username: {{ userName }}</p>
       <p>ID: {{ getUserId }}</p>
     </div>
-    <!-- User Info Modal Container -->
-    <!-- Log In Modal Container ENDS -->
-    <!-- User Section Container -->
+
+    <!-- User Info Modal Section ENDS -->
+
+    <!-- User Section -->
+
     <h1 class="start-view__title">Crypto Wallet</h1>
     <div class="start-view__user-section">
-      <img class="user-section__img" src="../assets/avatar.png" />
-      <h2 class="user-section__username">{{ userName }}</h2>
-      <div class="user-section__balancepart">
-        <h3 class="user-section__balance">Saldo: $ {{ balance }}</h3>
-        <button @click="openCloseBalanceModal" class="user-section__button">
+      <img class="start-view__user-section-img" src="../assets/avatar.png" />
+      <h2 class="start-view__user-section-username">{{ userName }}</h2>
+      <div class="start-view__user-section-balancepart">
+        <h3 class="start-view__user-section-balance">
+          Saldo: $ {{ parseFloat(balance.toFixed(2)).toLocaleString("es-AR") }}
+        </h3>
+        <button
+          @click="openCloseBalanceModal"
+          class="start-view__user-section-button"
+        >
           Modificar
         </button>
       </div>
     </div>
-    <!-- Balance Modal Container -->
-    <div v-if="balanceModal" class="start-view__balance-modal">
-      <div class="balance-modal__container">
+
+    <!-- Balance Modal Section -->
+
+    <div v-if="balanceModal" class="start-view__balance-modal-container">
+      <div class="start-view__balance-modal">
         <h3>Modificar Saldo</h3>
         <a
           @click="openCloseBalanceModal"
-          class="balance-modal__openclose-button"
+          class="start-view__balance-modal-close-button"
           >X</a
         >
         <p>{{ message }}</p>
@@ -64,18 +84,26 @@
           v-model="newBalanceAmount"
           Step="0.01"
         />
-        <div class="balance-modal__buttons-container">
-          <button class="balance-modal__button" @click="depositMoney">
+        <div class="start-view__balance-modal-buttons">
+          <button
+            class="start-view__balance-modal-button"
+            @click="depositMoney"
+          >
             Ingresar
           </button>
-          <button class="balance-modal__button" @click="withdrawMoney">
+          <button
+            class="start-view__balance-modal-button"
+            @click="withdrawMoney"
+          >
             Extraer
           </button>
         </div>
       </div>
     </div>
-    <!-- Balance Modal Container ENDS -->
-    <!-- User Section Container ENDS -->
+
+    <!-- Balance Modal Section ENDS -->
+
+    <!-- User Section Section ENDS -->
   </div>
 </template>
 
@@ -141,7 +169,8 @@ export default {
 </script>
 
 <style scoped>
-/* --- Start Main Styles Section --- */
+/* --- Start View Styles --- */
+
 .start-view {
   display: flex;
   width: 80vw;
@@ -149,10 +178,12 @@ export default {
   margin: 0 auto;
   flex-direction: column;
 }
-/* --- Start Main Styles Section ENDS --- */
 
-/* --- Login Modal Styles Section --- */
-.main-container__login-modal {
+/* --- Start View Styles ENDS --- */
+
+/* --- Login Modal Styles --- */
+
+.start-view__login-modal {
   display: flex;
   flex-direction: column;
   justify-self: center;
@@ -166,7 +197,7 @@ export default {
   border-radius: 10px;
 }
 
-.login-modal__header {
+.start-view__login-modal-header {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -174,11 +205,10 @@ export default {
   text-align: center;
 }
 
-.login-modal__title {
+.start-view__login-modal-title {
   align-self: center;
   width: 85%;
   padding: 20px 0 20px 0;
-  /* border-bottom: 2px solid #0004; */
   border-bottom: 5px solid;
   border-image-source: linear-gradient(
     to right,
@@ -189,7 +219,7 @@ export default {
   border-image-slice: 1;
 }
 
-.login-modal__content {
+.start-view__login-modal-content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -198,12 +228,12 @@ export default {
   margin-top: -90px;
 }
 
-.login-modal__subtitle {
+.start-view__login-modal-subtitle {
   margin-bottom: 30px;
   justify-self: start;
 }
 
-.login-modal__form-container {
+.start-view__login-modal-form-container {
   display: flex;
   flex-direction: column;
   justify-self: center;
@@ -211,7 +241,7 @@ export default {
   width: 100%;
 }
 
-.login-modal__form {
+.start-view__login-modal-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -219,12 +249,12 @@ export default {
   gap: 10px;
 }
 
-.login-modal__input {
+.start-view__login-modal-input {
   width: 90%;
   padding: 5px;
 }
 
-.login-modal__button {
+.start-view__login-modal-button {
   width: 65%;
   padding: 4px 10px;
   border-radius: 5px;
@@ -235,7 +265,7 @@ export default {
 
 /* --- User Info Modal Styles --- */
 
-.login-modal__userinfo {
+.start-view__login-modal-userinfo {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -250,13 +280,14 @@ export default {
   border-radius: 10px;
 }
 
-.login-modal__userinfo--closebutton {
+.start-view__login-modal-userinfo-closebutton {
   position: absolute;
   top: 0;
   right: 0;
   margin: 10px;
   cursor: pointer;
 }
+
 /* --- User Info Modal Styles ENDS ---*/
 
 /* --- Login Modal Styles Section ENDS --- */
@@ -285,16 +316,16 @@ export default {
   width: 100%;
 }
 
-.user-section__img {
+.start-view__user-section-img {
   width: 75px;
   margin-right: 10px;
 }
 
-.user-section__username {
+.start-view__user-section-username {
   margin-left: 10px;
 }
 
-.user-section__balancepart {
+.start-view__user-section-balancepart {
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -303,20 +334,22 @@ export default {
   margin-left: auto;
 }
 
-.user-section__balance {
+.start-view__user-section-balance {
   width: auto;
 }
 
-.user-section__button {
+.start-view__user-section-button {
   padding: 5px 2px;
   border-radius: 4px;
   border-style: none;
   color: #fffe;
   background-color: #1f2d5a;
+  cursor: pointer;
 }
 
 /*--- Balance Modal Styles ---*/
-.start-view__balance-modal {
+
+.start-view__balance-modal-container {
   display: flex;
   flex-direction: column;
   justify-self: center;
@@ -329,7 +362,7 @@ export default {
   border-radius: 10px;
 }
 
-.balance-modal__container {
+.start-view__balance-modal {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -337,24 +370,24 @@ export default {
   margin: 15px 10px;
 }
 
-.balance-modal__buttons-container {
-  display: flex;
-  gap: 8px;
-}
-
-.balance-modal__button {
-  padding: 6px 4px;
-  border-radius: 5px;
-  border-style: none;
-  color: #fffe;
-  background-color: #1f2d5a;
-}
-
-.balance-modal__openclose-button {
+.start-view__balance-modal-close-button {
   position: absolute;
   top: 0;
   right: 0;
   margin: 10px;
   cursor: pointer;
+}
+
+.start-view__balance-modal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.start-view__balance-modal-button {
+  padding: 6px 4px;
+  border-radius: 5px;
+  border-style: none;
+  color: #fffe;
+  background-color: #1f2d5a;
 }
 </style>
