@@ -1,70 +1,101 @@
 <template>
-  <h1>Wallet</h1>
-  <div class="main-container">
-    <h2>Saldo Actual:</h2>
-    <strong>$ {{ balance }}</strong>
-    <div>
-      <h3>Portfolio</h3>
-      <table>
+  <!-- Wallet View Section -->
+  <div class="wallet-view">
+    <h1 class="wallet-view__title">Wallet</h1>
+    <h3 class="wallet-view__balance">Saldo Actual: $ {{ balance }}</h3>
+
+    <!-- Portfolio Section -->
+
+    <div class="wallet-view__portfolio">
+      <h3 class="wallet-view__portfolio-title">Portfolio</h3>
+      <table class="wallet-view__portfolio-table">
         <thead>
           <tr>
-            <th>Criptomoneda</th>
-            <th>Cantidad</th>
-            <th>Balance Actual en ARS</th>
+            <th class="wallet-view__portfolio-column-header">Criptomoneda</th>
+            <th class="wallet-view__portfolio-column-header">Cantidad</th>
+            <th class="wallet-view__portfolio-column-header">Balance Actual</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(cryptoAmount, crypto) in portfolio" :key="crypto">
-            <td>{{ crypto }}</td>
-            <td>{{ cryptoAmount }}</td>
-            <td>$ {{ updateBalance(cryptoAmount, crypto) }}</td>
+          <tr
+            class="portfolio-row-coins"
+            v-for="(cryptoAmount, crypto) in portfolio"
+            :key="crypto"
+          >
+            <td class="wallet-view__portfolio-cell">{{ crypto }}</td>
+            <td class="wallet-view__portfolio-cell">{{ cryptoAmount }}</td>
+            <td class="wallet-view__portfolio-cell">
+              $ {{ updateBalance(cryptoAmount, crypto) }}
+            </td>
           </tr>
-          <tr>
-            <td><strong>Total</strong></td>
-            <td></td>
-            <td>$ {{ totalPortfolioBalance }}</td>
+          <tr class="portfolio-row-total">
+            <td class="wallet-view__portfolio-cell"><strong>Total</strong></td>
+            <td class="wallet-view__portfolio-cell"></td>
+            <td class="wallet-view__portfolio-cell">$ {{ totalPortfolioBalance }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div>
-      <h3>Analisis de Inversiones</h3>
-      <table>
+
+    <!-- Portfolio Section ENDS -->
+
+    <!-- Investments Analysis Section -->
+
+    <div class="wallet-view__investments">
+      <h3 class="wallet-view__investments-title">Analisis de Inversiones</h3>
+      <table class="wallet-view__investments-table">
         <thead>
           <tr>
-            <th>Criptomoneda</th>
-            <th>Resultado</th>
+            <th class="wallet-view__investments-column-header">Criptomoneda</th>
+            <th class="wallet-view__investments-column-header">Resultado</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(result, coin) in investmentsAnalysis" :key="coin">
-            <td>{{ coin }}</td>
-            <td>$ {{ result }}</td>
+          <tr
+            class="investments-row-analysis"
+            v-for="(result, coin) in investmentsAnalysis"
+            :key="coin"
+          >
+            <td class="wallet-view__investments-cell">{{ coin }}</td>
+            <td class="wallet-view__investments-cell">$ {{ result }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="history-container">
-      <table>
+
+    <!-- Investments Analysis Section ENDS -->
+
+    <!-- History Section -->
+
+    <div class="wallet-view__history">
+      <h3 class="wallet-view__history-title">Historial</h3>
+      <table class="wallet-view__history-table">
         <thead>
           <tr>
-            <th>Criptomoneda</th>
-            <th>Operacion</th>
-            <th>Cantidad</th>
-            <th>Monto</th>
-            <th>Fecha</th>
-            <th>Editar o Borrar</th>
+            <th class="wallet-view__history-column-header">Criptomoneda</th>
+            <th class="wallet-view__history-column-header">Operacion</th>
+            <th class="wallet-view__history-column-header">Cantidad</th>
+            <th class="wallet-view__history-column-header">Monto</th>
+            <th class="wallet-view__history-column-header">Fecha</th>
+            <th class="wallet-view__history-column-header">Editar o Borrar</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(historyData, history) in history" :key="history">
-            <td>{{ historyData.crypto_code }}</td>
-            <td>{{ historyData.action }}</td>
-            <td>{{ historyData.crypto_amount }}</td>
-            <td>$ {{ historyData.money.toLocaleString("es-AR") }}</td>
-            <td>{{ historyData.datetime }}</td>
-            <td>
-              <a
+          <tr
+            class="history-row"
+            v-for="(historyData, history) in history"
+            :key="history"
+          >
+            <td class="wallet-view__history-cell">{{ historyData.crypto_code }}</td>
+            <td class="wallet-view__history-cell">{{ historyData.action }}</td>
+            <td class="wallet-view__history-cell">{{ historyData.crypto_amount }}</td>
+            <td class="wallet-view__history-cell">
+              $ {{ historyData.money.toLocaleString("es-AR") }}
+            </td>
+            <td class="wallet-view__history-cell">{{ historyData.datetime }}</td>
+            <td class="wallet-view__history-cell">
+              <button
+                class="wallet-view__history-button"
                 @click="
                   openEditModal(
                     historyData._id,
@@ -73,28 +104,58 @@
                     historyData.money
                   )
                 "
-                >Editar</a
-              ><a @click="openDeleteModal(historyData._id)">Borrar</a>
+              >
+                Editar</button
+              ><button
+                class="wallet-view__history-button"
+                @click="openDeleteModal(historyData._id)"
+              >
+                Borrar
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
-      <div v-if="modalEdit" class="edit-moviment__modal">
-        <h3>Editar Movimiento</h3>
-        <p>Ingresar monto:</p>
-        <p>{{ eMessage }}</p>
-        <input type="number" v-model="newAmount" />
-        <button @click="editMoviment">Aceptar</button>
-        <button>Cancelar</button>
-      </div>
-      <div v-if="modalDelete" class="delete-moviment__modal">
-        <h3>Borrar Movimiento</h3>
-        <p>Desea Eliminar el movimiento?</p>
-        <button @click="deleteMoviment">Si</button>
-        <button>No</button>
+    </div>
+
+    <!-- History Section ENDS -->
+
+    <!-- Edit Moviment Modal Section -->
+
+    <div v-if="modalEdit" class="wallet-view__editmodal">
+      <a class="wallet-view__editmodal-closebutton" @click="openCloseModal('edit')">X</a>
+      <h3 class="wallet-view__editmodal-title">Editar Movimiento</h3>
+      <p>Ingresar monto:</p>
+      <p>{{ message }}</p>
+      <input type="number" v-model="newAmount" />
+      <div class="wallet-view__editmodal-buttons">
+        <button class="wallet-view__editmodal-button" @click="editMoviment">Aceptar</button>
+        <button class="wallet-view__editmodal-button" @click="openCloseModal('edit')">
+          Cancelar
+        </button>
       </div>
     </div>
+
+    <!-- Edit Moviment Modal Section ENDS -->
+
+    <!-- Delete Moviment Modal Section -->
+
+    <div v-if="modalDelete" class="wallet-view__deletemodal">
+      <a class="wallet-view__deletemodal-closebutton" @click="openCloseModal('delete')">X</a>
+      <h3 class="wallet-view__deletemodal-title">Borrar Movimiento</h3>
+      <p>Desea Eliminar el movimiento?</p>
+      <p>{{ message }}</p>
+      <div class="wallet-view__deletemodal-buttons">
+        <button class="wallet-view__deletemodal-button" @click="deleteMoviment">Si</button>
+        <button class="wallet-view__deletemodal-button" @click="openCloseModal('delete')">
+          No
+        </button>
+      </div>
+    </div>
+
+    <!-- Delete Moviment Modal Section ENDS -->
   </div>
+  <!-- Wallet View ENDS -->
 </template>
 
 <script>
@@ -104,7 +165,7 @@ export default {
   data() {
     return {
       modalEdit: false,
-      eMessage: "",
+      message: "",
       action: "",
       modalDelete: false,
       movimentId: "",
@@ -115,26 +176,35 @@ export default {
   },
   methods: {
     ...mapActions("user", ["loadPortfolio", "editHistory", "deleteHistory"]),
+    openCloseModal(modalType) {
+      this.message = "";
+      if (modalType === "edit") {
+        this.modalEdit = !this.modalEdit;
+      }
+      if (modalType === "delete") {
+        this.modalDelete = !this.modalDelete;
+      }
+    },
     openEditModal(
       movimentId,
       action,
       pOriginalCryptoAmount,
       pOriginalMoneyAmount
     ) {
-      this.modalEdit = !this.modalEdit;
+      this.openCloseModal("edit");
       this.movimentId = movimentId;
       this.action = action;
       this.originalCryptoAmount = pOriginalCryptoAmount;
       this.originalMoneyAmount = pOriginalMoneyAmount;
       console.log("monto", this.originalMoneyAmount);
     },
-    editMoviment() {
+    async editMoviment() {
       if (this.newAmount > 0) {
         if (
           this.action === "Compra" &&
           this.newAmount < this.originalMoneyAmount
         ) {
-          this.editHistory({
+          this.message = await this.editHistory({
             movimentId: this.movimentId,
             originalCryptoAmount: this.originalCryptoAmount,
             originalMoneyAmount: this.originalMoneyAmount,
@@ -142,7 +212,7 @@ export default {
             action: this.action,
           });
         } else {
-          this.eMessage = "El monto para editar una compra debe ser menor";
+          this.message = "El monto para editar una compra debe ser menor";
         }
       }
     },
@@ -150,9 +220,9 @@ export default {
       this.modalDelete = !this.modalDelete;
       this.movimentId = movimentId;
     },
-    deleteMoviment() {
+    async deleteMoviment() {
       console.log("Id a eliminar:", this.movimentId);
-      this.deleteHistory(this.movimentId);
+      this.message = await this.deleteHistory(this.movimentId);
     },
   },
   computed: {
@@ -170,24 +240,236 @@ export default {
 </script>
 
 <style scoped>
-body {
-  overflow-y: auto;
+/* --- Wallet Main Styles --- */
+
+.wallet-view {
+  display: flex;
+  width: 90vw;
+  min-height: 50vh;
+  margin: 0 auto;
+  flex-direction: column;
 }
 
-a {
+.wallet-view__title {
+  align-self: center;
+  width: 85%;
+  padding: 0 0 20px 0;
+  border-bottom: 5px solid;
+  border-image-source: linear-gradient(
+    to right,
+    transparent 0%,
+    #0009 50%,
+    transparent 100%
+  );
+  border-image-slice: 1;
+}
+
+.wallet-view__balance {
+  display: flex;
+  justify-content: start;
+  width: 100%;
+  margin: 20px 0;
+}
+
+/* --- Wallet Main Styles ENDS --- */
+
+/* --- Portfolio Styles --- */
+
+.wallet-view__portfolio {
+  display: flex;
+  margin: 20px 15px;
+  padding: 10px;
+  min-height: 20vh;
+  width: 50%;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  justify-self: center;
+  justify-content: center;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.wallet-view__portfolio-table {
+  width: 100%;
+  margin: 10px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.wallet-view__portfolio-column-header {
+  padding: 8px 10px;
+}
+
+.wallet-view__portfolio-cell {
+  padding: 5px;
+}
+
+/* --- Portfolio Styles ENDS --- */
+
+/* --- Investments Analysis Styles --- */
+
+.wallet-view__investments {
+  display: flex;
+  margin: 20px 15px;
+  padding: 10px;
+  min-height: 20vh;
+  width: 50%;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  justify-self: center;
+  justify-content: center;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.wallet-view__investments-table {
+  width: 100%;
+  margin: 10px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.wallet-view__investments-column-header {
+  padding: 8px 10px;
+}
+
+.wallet-view__investments-cell {
+  padding: 5px;
+}
+
+/* --- Investments Analysis Styles ENDS --- */
+
+/* --- History Styles --- */
+
+.wallet-view__history {
+  display: flex;
+  margin: 20px 15px 80px 15px;
+  padding: 10px 4px;
+  min-height: 20vh;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  justify-self: center;
+  justify-content: center;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.wallet-view__history-table {
+  width: 100%;
+  margin: 10px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.wallet-view__history-column-header {
+  padding: 8px 10px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.wallet-view__history-cell {
+  padding: 5px;
+  width: 100%;
+  border-bottom: 1px solid black;
+}
+
+.wallet-view__history-button {
+  margin: 5px;
+  padding: 5px 5px;
+  border-radius: 4px;
+  border-style: none;
+  color: #fffe;
+  background-color: #1f2d5a;
   cursor: pointer;
 }
 
-.edit-moviment__modal {
+/* --- History Styles ENDS --- */
+
+/* --- Edit Moviment Modal Styles --- */
+
+.wallet-view__editmodal {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  justify-self: center;
   align-items: center;
+  align-self: center;
   gap: 10px;
   position: fixed;
+  height: 40%;
   width: 30%;
-  height: 70%;
   background-color: #f5f5f5;
   border-radius: 10px;
 }
+
+.wallet-view__editmodal-closebutton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.wallet-view__editmodal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.wallet-view__editmodal-button {
+  margin: 5px;
+  padding: 5px 5px;
+  border-radius: 4px;
+  border-style: none;
+  color: #fffe;
+  background-color: #1f2d5a;
+  cursor: pointer;
+}
+
+/* --- Edit Moviment Modal Styles ENDS --- */
+
+/* --- Delete Moviment Modal Styles --- */
+
+.wallet-view__deletemodal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-self: center;
+  align-items: center;
+  align-self: center;
+  gap: 10px;
+  position: fixed;
+  height: 40%;
+  width: 30%;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+.wallet-view__deletemodal-closebutton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.wallet-view__deletemodal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.wallet-view__deletemodal-button {
+  margin: 5px;
+  padding: 5px 5px;
+  border-radius: 4px;
+  border-style: none;
+  color: #fffe;
+  background-color: #1f2d5a;
+  cursor: pointer;
+}
+
+/* --- Delete Moviment Modal Styles ENDS --- */
 </style>

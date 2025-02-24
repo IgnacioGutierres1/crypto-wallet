@@ -17,6 +17,7 @@ export default {
         const newBalance =
           parseFloat(crypto_amount) *
           parseFloat(state.cryptos["ripio"][coin].price);
+
         return newBalance;
       };
     },
@@ -63,6 +64,9 @@ export default {
         const result = operationsResults[coinI];
         totalAnalysis[coinI] =
           result.totalSale + result.currentValue - result.totalPurchase;
+        if (totalAnalysis[coinI] > 0) {
+          totalAnalysis[coinI] = "+" + totalAnalysis[coinI];
+        }
       }
       return totalAnalysis;
     },

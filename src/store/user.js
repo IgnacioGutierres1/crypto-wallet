@@ -119,11 +119,11 @@ export default {
       console.log("Objeto Recibido: ", postRequestData);
       try {
         const apiClient = await axios.post(
-          "https://labor3-d60e.restdb.io/rest/transactions",
+          "https://laboratorio3-5459.restdb.io/rest/transactions",
           postRequestData,
           {
             headers: {
-              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+              "x-apikey": "64a57c2b86d8c50fe6ed8fa5",
             },
           }
         );
@@ -164,15 +164,15 @@ export default {
 
       try {
         const request = await axios.get(
-          `https://labor3-d60e.restdb.io/rest/transactions?q={"user_id": "${state.user.userId}"}`,
+          `https://laboratorio3-5459.restdb.io/rest/transactions?q={"user_id": "${state.user.userId}"}`,
           {
             headers: {
-              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+              "x-apikey": "64a57c2b86d8c50fe6ed8fa5",
             },
           }
         );
         if (request.status === 201 || request.status === 200) {
-          alert("Datos Cargados Exitosamente");
+          /* alert("Datos Cargados Exitosamente"); */
           newHistory = request.data;
           for (var key in newHistory) {
             var historyData = newHistory[key];
@@ -212,38 +212,42 @@ export default {
 
       try {
         const request = await axios.patch(
-          `https://labor3-d60e.restdb.io/rest/transactions/${payload.movimentId}`,
+          `https://laboratorio3-5459.restdb.io/rest/transactions/${payload.movimentId}`,
           newMoviment,
           {
             headers: {
-              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+              "x-apikey": "64a57c2b86d8c50fe6ed8fa5",
             },
           }
         );
         if (request.status === 200 || request.status === 201) {
           commit("setBalance", newBalance);
           dispatch("loadHistory");
+          return "Se edito correctamente ✅";
         }
       } catch (error) {
         console.log("error en el patch:", error);
+        return "Ocurrió un error ❌";
       }
     },
 
     async deleteHistory({ dispatch }, movimentId) {
       try {
         const request = await axios.delete(
-          `https://labor3-d60e.restdb.io/rest/transactions/${movimentId}`,
+          `https://laboratorio3-5459.restdb.io/rest/transactions/${movimentId}`,
           {
             headers: {
-              "x-apikey": "64a2e9bc86d8c525a3ed8f63",
+              "x-apikey": "64a57c2b86d8c50fe6ed8fa5",
             },
           }
         );
         if (request.status === 200 || request.status === 201) {
           dispatch("loadHistory");
+          return "Se elimino correctamente ✅";
         }
       } catch (error) {
         console.log("error en el patch:", error);
+        return "Ocurrió un error ❌";
       }
     },
 
