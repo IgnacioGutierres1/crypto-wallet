@@ -9,7 +9,7 @@
     <div class="operations-view__coins">
       <!-- Exchanges Select Section -->
 
-      <div>
+      <div class="operations-view__coins-header">
         <select
           class="operations-view__coins-select"
           v-model="selectedExchange"
@@ -229,7 +229,6 @@ export default {
 .operations-view__title {
   align-self: center;
   padding-bottom: 20px;
-  margin-bottom: 15px;
   width: 100%;
   border-bottom: 5px solid;
   border-image-source: linear-gradient(
@@ -247,7 +246,7 @@ export default {
 .operations-view__coins {
   display: flex;
   margin: 15px;
-  min-height: 60vh;
+  min-height: 80vh;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -256,12 +255,18 @@ export default {
 
 /* --- Exchanges Select Styles --- */
 
+.operations-view__coins-header {
+  width: 61%;
+  display: flex;
+  justify-content: start;
+}
+
 .operations-view__coins-select {
+  display: flex;
   margin: 5px;
   padding: 5px;
-  position: absolute;
-  top: 0;
-  left: 215px;
+  align-self: start;
+  justify-self: start;
 }
 
 /* --- Exchanges Select Styles ENDS --- */

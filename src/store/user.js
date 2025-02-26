@@ -105,6 +105,22 @@ export default {
       localStorage.removeItem("user");
     },
 
+    editBalance({ commit, state }, payload) {
+      var newBalance = parseFloat(state.user.balance);
+      var msg = "";
+      if (payload.action === "deposit") {
+        newBalance += payload.amount;
+        msg = `Se ingreso correctamente $${payload.amount} ✅`;
+      }
+      if (payload.action === "withdraw") {
+        newBalance -= payload.amount;
+        msg = `Se extrajo correctamente $${payload.amount} ✅`;
+      }
+      commit("setBalance", newBalance);
+      console.log("Nuevo Balance: ", newBalance);
+      return msg;
+    },
+
     async postOperation({ commit, state }, payload) {
       console.log("Objeto antes de data", payload);
       var newBalance;
@@ -172,7 +188,6 @@ export default {
           }
         );
         if (request.status === 201 || request.status === 200) {
-          /* alert("Datos Cargados Exitosamente"); */
           newHistory = request.data;
           for (var key in newHistory) {
             var historyData = newHistory[key];
@@ -281,22 +296,6 @@ export default {
       console.log("Portfolio: ", newPortfolio);
 
       commit("setPortfolio", newPortfolio);
-    },
-
-    editBalance({ commit, state }, payload) {
-      var newBalance = parseFloat(state.user.balance);
-      var msg = "";
-      if (payload.action === "deposit") {
-        newBalance += payload.amount;
-        msg = `Se ingreso correctamente $${payload.amount} ✅`;
-      }
-      if (payload.action === "withdraw") {
-        newBalance -= payload.amount;
-        msg = `Se extrajo correctamente $${payload.amount} ✅`;
-      }
-      commit("setBalance", newBalance);
-      console.log("Nuevo Balance: ", newBalance);
-      return msg;
     },
   },
 };

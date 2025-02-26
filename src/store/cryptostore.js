@@ -81,7 +81,7 @@ export default {
   actions: {
     async fetchCryptos({ commit }) {
       let cryptoData = {};
-      let coins = ["BTC", "ETH", "USDT", "USDC", "DAI", "UXD"];
+      let coins = ["BTC", "ETH", "USDT", "USDC", "DAI", "ADA", "DOGE", "DOT"];
       let exchanges = ["binance", "bybit", "satoshitango", "ripio"];
 
       try {
@@ -90,11 +90,15 @@ export default {
           cryptoData[exchange] = {};
           for (const coin of coins) {
             const promise = axios
-              .get(`https://criptoya.com/api/${exchange}/${coin}/ARS`)
+              .get(`https://criptoya.com/api/${exchange}/${coin}/ARS`, {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
               .then(function (request) {
                 if (request.status === 201 || request.status === 200) {
                   cryptoData[exchange][coin] = { price: request.data.totalBid };
-                  promises.push(request);
+                  promises.push(promise);
                 }
               })
 
