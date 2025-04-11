@@ -67,7 +67,7 @@ export default {
 /* --- Header Main Styles Section Section --- */
 .header-container {
   display: grid;
-  margin: 10px 10px 30px 10px;
+  margin: 0 10px 30px 10px;
   padding: 0 5px;
   border-radius: 10px;
   grid-template-columns: 1fr auto 1fr;

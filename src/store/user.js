@@ -267,6 +267,7 @@ export default {
     },
 
     async loadPortfolio({ commit, state, dispatch }) {
+      /* await dispatch("cryptostore/fetchCryptos", { root: true }); */
       await dispatch("loadHistory");
 
       const tempHistory = state.history;

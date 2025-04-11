@@ -29,10 +29,21 @@ export default {
   box-sizing: border-box;
 }
 
+:root {
+  --color-main-bg: #0f172a;
+  --color-modal-bg: #2b323d;
+  /* --color-modal-bg: #f5f5f5; */
+  --color-line-decoration: #1f2d5a;
+  --color-font: #f3f4f6;
+}
+
+html,
+body,
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   text-align: center;
-  color: #2c3e50;
+  color: var(--color-font);
+  background-color: var(--color-main-bg);
 }
 
 nav {

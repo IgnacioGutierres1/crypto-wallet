@@ -191,9 +191,9 @@ export default {
   align-items: center;
   gap: 10px;
   position: fixed;
-  width: 30%;
+  width: 35%;
   height: 70%;
-  background-color: #f5f5f5;
+  background-color: var(--color-modal-bg);
   border-radius: 10px;
 }
 
@@ -213,7 +213,7 @@ export default {
   border-image-source: linear-gradient(
     to right,
     transparent 0%,
-    #0009 50%,
+    var(--color-line-decoration) 50%,
     transparent 100%
   );
   border-image-slice: 1;
@@ -225,7 +225,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: -90px;
+  margin-top: -100px;
 }
 
 .start-view__login-modal-subtitle {
@@ -246,21 +246,30 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .start-view__login-modal-input {
   width: 90%;
-  padding: 5px;
+  background-color: #fff1;
+  padding: 7px 17px;
+  border-radius: 5px;
+  border-style: none;
+}
+
+.start-view__login-modal-input:focus {
+  border: 1px solid #006eff;
+  outline: none;
 }
 
 .start-view__login-modal-button {
   width: 65%;
-  padding: 4px 10px;
+  padding: 8px 10px;
   border-radius: 5px;
   border-style: none;
   color: #fffe;
   background-color: #1f2d5a;
+  cursor: pointer;
 }
 
 /* --- User Info Modal Styles --- */
