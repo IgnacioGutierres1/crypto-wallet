@@ -33,8 +33,11 @@ export default {
   --color-main-bg: #0f172a;
   --color-modal-bg: #2b323d;
   /* --color-modal-bg: #f5f5f5; */
-  --color-line-decoration: #1f2d5a;
+  --color-line-decoration: #4164d4;
   --color-font: #f3f4f6;
+  --color-button-bg: #1f2d5a;
+  --color-buttonselected-bg: #345ad6dc;
+  --modal-shadow: 0 0 15px #0d36be59;
 }
 
 html,

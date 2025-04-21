@@ -2,6 +2,15 @@
   <!-- Start View Section -->
 
   <div class="start-view">
+    <!-- Modal Overlay Blur Section -->
+
+    <div
+      v-if="!login || userLoginModal || balanceModal"
+      class="modal-overlay"
+    ></div>
+
+    <!-- Modal Overlay Blur Section ENDS -->
+
     <!-- LogIn Modal Section -->
 
     <div v-if="!login" class="start-view__login-modal">
@@ -59,7 +68,7 @@
         </h3>
         <button
           @click="openCloseBalanceModal"
-          class="start-view__user-section-button"
+          class="start-view__user-section-balance-button"
         >
           Modificar
         </button>
@@ -78,7 +87,7 @@
         >
         <p>{{ message }}</p>
         <input
-          class="balance-modal__input"
+          class="start-view__balance-modal-input"
           type="number"
           placeholder="Saldo"
           v-model="newBalanceAmount"
@@ -181,6 +190,21 @@ export default {
 
 /* --- Start View Styles ENDS --- */
 
+/* --- Modal Overlay Blur Styles ---  */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(5px);
+  background-color: #000a;
+  z-index: 1000;
+}
+
+/* --- Modal Overlay Blur Styles ENDS --- */
+
 /* --- Login Modal Styles --- */
 
 .start-view__login-modal {
@@ -194,7 +218,9 @@ export default {
   width: 35%;
   height: 70%;
   background-color: var(--color-modal-bg);
+  box-shadow: var(--modal-shadow);
   border-radius: 10px;
+  z-index: 1010;
 }
 
 .start-view__login-modal-header {
@@ -251,10 +277,12 @@ export default {
 
 .start-view__login-modal-input {
   width: 90%;
+  color: var(--color-font);
   background-color: #fff1;
   padding: 7px 17px;
+  border: 1px solid transparent;
+  outline: none;
   border-radius: 5px;
-  border-style: none;
 }
 
 .start-view__login-modal-input:focus {
@@ -268,8 +296,12 @@ export default {
   border-radius: 5px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
   cursor: pointer;
+}
+
+.start-view__login-modal-button:hover {
+  background-color: var(--color-buttonselected-bg);
 }
 
 /* --- User Info Modal Styles --- */
@@ -285,8 +317,10 @@ export default {
   position: fixed;
   width: 20%;
   height: 20%;
-  background-color: #f5f5f5;
+  background-color: var(--color-modal-bg);
+  box-shadow: var(--modal-shadow);
   border-radius: 10px;
+  z-index: 1010;
 }
 
 .start-view__login-modal-userinfo-closebutton {
@@ -312,7 +346,7 @@ export default {
   border-image-source: linear-gradient(
     to right,
     transparent 0%,
-    #0009 50%,
+    var(--color-line-decoration) 50%,
     transparent 100%
   );
   border-image-slice: 1;
@@ -347,13 +381,17 @@ export default {
   width: auto;
 }
 
-.start-view__user-section-button {
+.start-view__user-section-balance-button {
   padding: 5px 2px;
   border-radius: 4px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
   cursor: pointer;
+}
+
+.start-view__user-section-balance-button:hover {
+  background-color: var(--color-buttonselected-bg);
 }
 
 /*--- Balance Modal Styles ---*/
@@ -367,8 +405,9 @@ export default {
   width: 300px;
   height: auto;
   margin-top: 80px;
-  background-color: #f5f5f5;
+  background-color: var(--color-modal-bg);
   border-radius: 10px;
+  z-index: 1010;
 }
 
 .start-view__balance-modal {
@@ -387,16 +426,31 @@ export default {
   cursor: pointer;
 }
 
+.start-view__balance-modal-input {
+  width: 80%;
+  color: var(--color-font);
+  background-color: #fff1;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  outline: none;
+  border-radius: 5px;
+}
+
 .start-view__balance-modal-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .start-view__balance-modal-button {
-  padding: 6px 4px;
+  padding: 6px 13px;
   border-radius: 5px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
+  cursor: pointer;
+}
+
+.start-view__balance-modal-button:hover {
+  background-color: var(--color-buttonselected-bg);
 }
 </style>
