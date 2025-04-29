@@ -32,6 +32,7 @@ export default {
 :root {
   --color-main-bg: #0f172a;
   --color-modal-bg: #2b323d;
+  --color-sections-bg: #38383833;
   /* --color-modal-bg: #f5f5f5; */
   --color-line-decoration: #4164d4;
   --color-font: #f3f4f6;

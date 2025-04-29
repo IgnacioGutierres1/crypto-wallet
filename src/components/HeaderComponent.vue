@@ -1,6 +1,7 @@
 <template>
   <header class="header-container">
     <!-- Nav Section -->
+
     <div class="header-container__sidebar"></div>
     <div class="header-container__nav">
       <router-link to="/" class="header-container__link">Inicio</router-link>
@@ -11,6 +12,7 @@
         >Wallet</router-link
       >
     </div>
+
     <!-- Nav Section -->
     <!-- Profile Section -->
     <div class="header-container__avatar">

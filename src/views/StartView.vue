@@ -198,8 +198,8 @@ export default {
   left: 0;
   height: 100vh;
   width: 100vw;
-  backdrop-filter: blur(5px);
-  background-color: #000a;
+  backdrop-filter: blur(1px);
+  background-color: #0008;
   z-index: 1000;
 }
 
@@ -214,12 +214,19 @@ export default {
   align-self: center;
   align-items: center;
   gap: 10px;
-  position: fixed;
-  width: 35%;
-  height: 70%;
   background-color: var(--color-modal-bg);
   box-shadow: var(--modal-shadow);
   border-radius: 10px;
+  position: fixed;
+  /* width: 35%;
+  height: 70%; */
+  min-width: 400px;
+  width: 35vw;
+  max-width: 470px;
+  height: 80vh;
+  min-height: 400px;
+  max-height: 480px;
+  overflow-y: auto; /* scroll  */
   z-index: 1010;
 }
 
@@ -304,6 +311,19 @@ export default {
   background-color: var(--color-buttonselected-bg);
 }
 
+/* --- Login Modal Media Queries --- */
+
+@media (max-width: 600px) {
+  .start-view__login-modal {
+    top: 10vh;
+    min-width: 300px;
+    width: 80vw;
+    margin: auto;
+    max-width: 350px;
+    height: 50vh;
+  }
+}
+
 /* --- User Info Modal Styles --- */
 
 .start-view__login-modal-userinfo {
@@ -357,6 +377,9 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+  padding: 18px 22px;
+  border-radius: 20px;
+  background-color: var(--color-sections-bg);
 }
 
 .start-view__user-section-img {
@@ -371,7 +394,6 @@ export default {
 .start-view__user-section-balancepart {
   display: flex;
   flex-direction: column;
-  align-content: center;
   justify-content: center;
   gap: 5px;
   margin-left: auto;
@@ -382,6 +404,9 @@ export default {
 }
 
 .start-view__user-section-balance-button {
+  align-self: center;
+  width: 84px;
+  height: 25px;
   padding: 5px 2px;
   border-radius: 4px;
   border-style: none;
