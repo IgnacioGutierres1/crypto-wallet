@@ -182,13 +182,18 @@ export default {
 
 .start-view {
   display: flex;
-  width: 80vw;
-  min-height: 50vh;
-  margin: 0 auto;
+  padding: 10px;
   flex-direction: column;
+  flex: 1;
 }
 
-/* --- Start View Styles ENDS --- */
+/* @media (max-width: 600px) {
+  .start-view {
+    width: 90dvw;
+  }
+} */
+
+/* --- Start View Styles Ends --- */
 
 /* --- Modal Overlay Blur Styles ---  */
 
@@ -324,6 +329,8 @@ export default {
   }
 }
 
+/* --- Login Modal Styles Ends --- */
+
 /* --- User Info Modal Styles --- */
 
 .start-view__login-modal-userinfo {
@@ -351,9 +358,9 @@ export default {
   cursor: pointer;
 }
 
-/* --- User Info Modal Styles ENDS ---*/
+/* --- User Info Modal Styles Ends ---*/
 
-/* --- Login Modal Styles Section ENDS --- */
+/* --- Login Modal Styles Section Ends --- */
 
 /* --- User Section Styles --- */
 
@@ -418,6 +425,13 @@ export default {
 .start-view__user-section-balance-button:hover {
   background-color: var(--color-buttonselected-bg);
 }
+
+@media (max-width: 600px) {
+  .start-view__user-section {
+  }
+}
+
+/* --- User Section Styles Ends --- */
 
 /*--- Balance Modal Styles ---*/
 

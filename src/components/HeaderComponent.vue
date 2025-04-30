@@ -4,13 +4,21 @@
 
     <div class="header-container__sidebar"></div>
     <div class="header-container__nav">
-      <router-link to="/" class="header-container__link">Inicio</router-link>
-      <router-link to="/OperationsView" class="header-container__link"
-        >Operaciones</router-link
-      >
-      <router-link to="/WalletView" class="header-container__link"
-        >Wallet</router-link
-      >
+      <a @click="openCloseSidebar">Sidebar</a>
+      <router-link to="/" class="header-container__link">
+        <span class="material-symbols-outlined header-container__link-symbol"
+          >home</span
+        >
+        Inicio
+      </router-link>
+      <router-link to="/OperationsView" class="header-container__link">
+        <span class="material-symbols-outlined">monitoring</span>
+        Operaciones
+      </router-link>
+      <router-link to="/WalletView" class="header-container__link">
+        <span class="material-symbols-outlined">account_balance_wallet</span>
+        Wallet
+      </router-link>
     </div>
 
     <!-- Nav Section -->
@@ -48,10 +56,14 @@ export default {
   data() {
     return {
       selectedAvatar: false,
+      sidebarOpen: false,
     };
   },
   methods: {
     ...mapActions("user", ["logOut"]),
+    openCloseSidebar() {
+      this.sidebarOpen = !this.sidebarOpen;
+    },
     openProfile() {
       this.selectedAvatar = !this.selectedAvatar;
     },
@@ -68,13 +80,18 @@ export default {
 <style scoped>
 /* --- Header Main Styles Section Section --- */
 .header-container {
-  display: grid;
-  margin: 0 10px 30px 10px;
-  padding: 0 5px;
+  /* display: grid; */
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 6px;
   border-radius: 10px;
-  grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: 3rem;
-  align-items: center;
+  height: 100dvh;
+  width: 170px;
+  /* grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 3rem; 
+  align-items: center; */
   background: linear-gradient(45deg, #1a1c35, #1f2d5a, #1f2061);
 }
 /* --- Header Main Styles Section ENDS --- */
@@ -82,19 +99,49 @@ export default {
 /* --- Nav Styles Section --- */
 .header-container__nav {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
+  flex-direction: column;
+  align-items: start;
+  /* justify-content: center; */
+  gap: 8px;
 }
 
+.header-container__nav-item {
+  width: 100%;
+}
+
+/* .header-container__nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 2px 4px;
+  border-radius: 8px;
+} */
+
 .header-container__link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 8px;
   text-decoration: none;
-  padding: 13px 10px;
   color: white;
+  gap: 8px;
 }
 
 .header-container__link:hover {
-  background: rgba(243, 243, 243, 0.664);
+  background: var(--color-linkselected-bg);
 }
+
+.header-container__link-symbol {
+  margin-bottom: 3px;
+}
+
+/* .header-container__link {
+  text-decoration: none;
+  padding: 13px 10px;
+  color: white;
+} */
+
 /* --- Nav Styles Section ENDS --- */
 
 /* --- Profile Styles Section --- */
@@ -113,10 +160,6 @@ export default {
   justify-self: end;
 }
 
-.header-container__avatar--img:hover {
-  background-color: #0009;
-}
-
 .header-container__avatar--img.avatar-selected {
   background-color: #0002;
 }
@@ -132,7 +175,7 @@ export default {
   height: 350px;
   padding: 12px;
   border-radius: 10px 0 10px 10px;
-  background-color: #ffff;
+  background-color: var(--color-modal-bg);
   box-shadow: 0 0 10px #0000001a;
 }
 
@@ -145,5 +188,5 @@ export default {
   right: 0;
 }
 
-/* --- Profile Styles Section ENDS --- */
+/* --- Profile Styles Section Ends --- */
 </style>

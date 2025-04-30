@@ -1,6 +1,8 @@
 <template>
   <HeaderComponent></HeaderComponent>
-  <router-view />
+  <main class="main-content">
+    <router-view />
+  </main>
 </template>
 
 <script>
@@ -33,11 +35,11 @@ export default {
   --color-main-bg: #0f172a;
   --color-modal-bg: #2b323d;
   --color-sections-bg: #38383833;
-  /* --color-modal-bg: #f5f5f5; */
   --color-line-decoration: #4164d4;
   --color-font: #f3f4f6;
   --color-button-bg: #1f2d5a;
   --color-buttonselected-bg: #345ad6dc;
+  --color-linkselected-bg: #0a0a0a;
   --modal-shadow: 0 0 15px #0d36be59;
 }
 
@@ -50,16 +52,15 @@ body,
   background-color: var(--color-main-bg);
 }
 
-nav {
-  padding: 30px;
+#app {
+  display: flex;
+  height: 100dvh;
 }
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+.main-content {
+  width: calc(100dvw - 170px);
+  height: 100dvh;
+  margin-left: 170px;
+  flex: 1;
 }
 </style>
