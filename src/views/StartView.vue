@@ -13,28 +13,30 @@
 
     <!-- LogIn Modal Section -->
 
-    <div v-if="!login" class="start-view__login-modal">
-      <div class="start-view__login-modal-header">
-        <h1 class="start-view__login-modal-title">Crypto Wallet</h1>
-      </div>
-      <div class="start-view__login-modal-content">
-        <h2 class="start-view__login-modal-subtitle">Inicio de Sesión</h2>
-        <div class="start-view__login-modal-form-container">
-          <form
-            @submit.prevent="sendLogin"
-            class="start-view__login-modal-form"
-          >
-            <input
-              class="start-view__login-modal-input"
-              type="text"
-              placeholder="Ingrese su UserName"
-              v-model="logUserName"
-              required
-            />
-            <button class="start-view__login-modal-button" type="submit">
-              Obtenga su ID
-            </button>
-          </form>
+    <div v-if="!login" class="start-view__login-modal-overlay">
+      <div class="start-view__login-modal">
+        <div class="start-view__login-modal-header">
+          <h1 class="start-view__login-modal-title">Crypto Wallet</h1>
+        </div>
+        <div class="start-view__login-modal-content">
+          <h2 class="start-view__login-modal-subtitle">Inicio de Sesión</h2>
+          <div class="start-view__login-modal-form-container">
+            <form
+              @submit.prevent="sendLogin"
+              class="start-view__login-modal-form"
+            >
+              <input
+                class="start-view__login-modal-input"
+                type="text"
+                placeholder="Ingrese su UserName"
+                v-model="logUserName"
+                required
+              />
+              <button class="start-view__login-modal-button" type="submit">
+                Obtenga su ID
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -43,15 +45,17 @@
 
     <!-- User Info Modal Section -->
 
-    <div v-if="userLoginModal" class="start-view__login-modal-userinfo">
-      <a
-        @click="closeUserModal"
-        class="start-view__login-modal-userinfo-closebutton"
-        >X</a
-      >
-      <p>{{ message }}</p>
-      <p>Username: {{ userName }}</p>
-      <p>ID: {{ getUserId }}</p>
+    <div v-if="userLoginModal" class="start-view__login-modal-userinfo-overlay">
+      <div class="start-view__login-modal-userinfo">
+        <a
+          @click="closeUserModal"
+          class="start-view__login-modal-userinfo-closebutton"
+          >X</a
+        >
+        <p>{{ message }}</p>
+        <p>Username: {{ userName }}</p>
+        <p>ID: {{ getUserId }}</p>
+      </div>
     </div>
 
     <!-- User Info Modal Section ENDS -->
@@ -77,35 +81,43 @@
 
     <!-- Balance Modal Section -->
 
-    <div v-if="balanceModal" class="start-view__balance-modal-container">
-      <div class="start-view__balance-modal">
-        <h3>Modificar Saldo</h3>
-        <a
-          @click="openCloseBalanceModal"
-          class="start-view__balance-modal-close-button"
-          >X</a
-        >
-        <p>{{ message }}</p>
-        <input
-          class="start-view__balance-modal-input"
-          type="number"
-          placeholder="Saldo"
-          v-model="newBalanceAmount"
-          Step="0.01"
-        />
-        <div class="start-view__balance-modal-buttons">
-          <button
-            class="start-view__balance-modal-button"
-            @click="depositMoney"
+    <div v-if="balanceModal" class="start-view__balance-modal-overlay">
+      <div v-if="balanceModal" class="start-view__balance-modal-container">
+        <div class="start-view__balance-modal">
+          <h3>Modificar Saldo</h3>
+          <!-- <a
+            @click="openCloseBalanceModal"
+            class="start-view__balance-modal-close-button"
+            >X</a
+          > -->
+          <span
+            @click="openCloseBalanceModal"
+            class="material-symbols-outlined start-view__balance-modal-close-button"
           >
-            Ingresar
-          </button>
-          <button
-            class="start-view__balance-modal-button"
-            @click="withdrawMoney"
-          >
-            Extraer
-          </button>
+            close
+          </span>
+          <p>{{ message }}</p>
+          <input
+            class="start-view__balance-modal-input"
+            type="number"
+            placeholder="Saldo"
+            v-model="newBalanceAmount"
+            Step="0.01"
+          />
+          <div class="start-view__balance-modal-buttons">
+            <button
+              class="start-view__balance-modal-button"
+              @click="depositMoney"
+            >
+              Ingresar
+            </button>
+            <button
+              class="start-view__balance-modal-button"
+              @click="withdrawMoney"
+            >
+              Extraer
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -187,12 +199,6 @@ export default {
   flex: 1;
 }
 
-/* @media (max-width: 600px) {
-  .start-view {
-    width: 90dvw;
-  }
-} */
-
 /* --- Start View Styles Ends --- */
 
 /* --- Modal Overlay Blur Styles ---  */
@@ -212,6 +218,18 @@ export default {
 
 /* --- Login Modal Styles --- */
 
+.start-view__login-modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1010;
+}
+
 .start-view__login-modal {
   display: flex;
   flex-direction: column;
@@ -223,15 +241,12 @@ export default {
   box-shadow: var(--modal-shadow);
   border-radius: 10px;
   position: fixed;
-  /* width: 35%;
-  height: 70%; */
   min-width: 400px;
   width: 35vw;
   max-width: 470px;
   height: 80vh;
   min-height: 400px;
   max-height: 480px;
-  overflow-y: auto; /* scroll  */
   z-index: 1010;
 }
 
@@ -430,15 +445,25 @@ export default {
 
 /*--- Balance Modal Styles ---*/
 
+.start-view__balance-modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1010;
+}
+
 .start-view__balance-modal-container {
   display: flex;
   flex-direction: column;
   justify-self: center;
   align-self: center;
-  position: fixed;
   width: 300px;
   height: auto;
-  margin-top: 80px;
   background-color: var(--color-modal-bg);
   border-radius: 10px;
   z-index: 1010;
@@ -446,6 +471,7 @@ export default {
 
 .start-view__balance-modal {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   gap: 10px;
@@ -456,7 +482,8 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
-  margin: 10px;
+  margin-top: -10px;
+  margin-right: -5px;
   cursor: pointer;
 }
 

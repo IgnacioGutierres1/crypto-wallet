@@ -1,23 +1,38 @@
 <template>
-  <header class="header-container">
+  <header
+    class="header-container"
+    :class="{ 'sidebar-contracted': !sidebarExpanded }"
+  >
     <!-- Nav Section -->
 
-    <div class="header-container__sidebar"></div>
+    <div class="header-container__sidebarbuttons">
+      <span
+        v-if="!sidebarExpanded"
+        class="material-symbols-outlined header-container__button header-container__openbutton"
+        @click="changeSidebar"
+        >menu</span
+      >
+      <span
+        v-if="sidebarExpanded"
+        class="material-symbols-outlined header-container__button header-container__closebutton"
+        @click="changeSidebar"
+        >menu_open</span
+      >
+    </div>
     <div class="header-container__nav">
-      <a @click="openCloseSidebar">Sidebar</a>
       <router-link to="/" class="header-container__link">
         <span class="material-symbols-outlined header-container__link-symbol"
           >home</span
         >
-        Inicio
+        <p v-if="sidebarExpanded">Inicio</p>
       </router-link>
       <router-link to="/OperationsView" class="header-container__link">
         <span class="material-symbols-outlined">monitoring</span>
-        Operaciones
+        <p v-if="sidebarExpanded">Operaciones</p>
       </router-link>
       <router-link to="/WalletView" class="header-container__link">
         <span class="material-symbols-outlined">account_balance_wallet</span>
-        Wallet
+        <p v-if="sidebarExpanded">Wallet</p>
       </router-link>
     </div>
 
@@ -42,6 +57,7 @@
           class="header-container__profile--logout"
         >
           Cerrar Sesión
+          <span class="material-symbols-outlined"> logout </span>
         </button>
       </div>
     </div>
@@ -49,7 +65,7 @@
   </header>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
   name: "HeaderComponent",
@@ -61,6 +77,7 @@ export default {
   },
   methods: {
     ...mapActions("user", ["logOut"]),
+    ...mapMutations("ui", ["changeSidebar"]),
     openCloseSidebar() {
       this.sidebarOpen = !this.sidebarOpen;
     },
@@ -74,18 +91,18 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["userName", "userId", "login"]),
+    ...mapGetters("ui", ["sidebarExpanded"]),
   },
 };
 </script>
 <style scoped>
 /* --- Header Main Styles Section Section --- */
 .header-container {
-  /* display: grid; */
-  position: fixed;
   display: flex;
+  position: fixed;
   flex-direction: column;
   justify-content: space-between;
-  padding: 12px 6px;
+  padding: 8px 6px;
   border-radius: 10px;
   height: 100dvh;
   width: 170px;
@@ -94,7 +111,35 @@ export default {
   align-items: center; */
   background: linear-gradient(45deg, #1a1c35, #1f2d5a, #1f2061);
 }
-/* --- Header Main Styles Section ENDS --- */
+
+.sidebar-contracted {
+  width: 50px;
+}
+
+/* --- Header Main Styles Section Ends --- */
+
+/* --- Sidebar Buttons --- */
+
+.header-container__sidebarbuttons {
+  display: flex;
+  justify-content: end;
+}
+
+.header-container__button {
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.header-container__button:hover {
+  background-color: #000000ea;
+}
+
+.header-container__closebutton {
+  margin-left: auto;
+}
+
+/* --- Sidebar Buttons Ends --- */
 
 /* --- Nav Styles Section --- */
 .header-container__nav {
@@ -169,23 +214,35 @@ export default {
   flex-direction: column;
   gap: 5px;
   position: absolute;
-  bottom: 200px;
-  right: 40px;
+  bottom: 32px;
+  left: 52px;
   width: 350px;
   height: 350px;
   padding: 12px;
-  border-radius: 10px 0 10px 10px;
+  border-radius: 10px 10px 10px 0;
   background-color: var(--color-modal-bg);
   box-shadow: 0 0 10px #0000001a;
 }
 
 .header-container__profile--logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 30px;
-  padding: 5px 8px;
+  padding: 12px 6px;
   margin: 10px;
   position: absolute;
   bottom: 0;
   right: 0;
+  background-color: var(--color-button-bg);
+  border-style: none;
+  border-radius: 4px;
+  color: var(--color-font);
+  cursor: pointer;
+}
+
+.header-container__profile--logout:hover {
+  background-color: var(--color-buttonselected-bg);
 }
 
 /* --- Profile Styles Section Ends --- */

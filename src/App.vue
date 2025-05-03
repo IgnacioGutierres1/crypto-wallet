@@ -1,6 +1,6 @@
 <template>
   <HeaderComponent></HeaderComponent>
-  <main class="main-content">
+  <main class="main-content" :class="{ 'sidebar-expanded': !sidebarExpanded }">
     <router-view />
   </main>
 </template>
@@ -18,6 +18,7 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["login"]),
+    ...mapGetters("ui", ["sidebarExpanded"]),
   },
 };
 </script>
@@ -61,6 +62,12 @@ body,
   width: calc(100dvw - 170px);
   height: 100dvh;
   margin-left: 170px;
+  padding: 20px 10px;
   flex: 1;
+}
+
+.sidebar-expanded {
+  width: calc(100dvw - 50px);
+  margin-left: 50px;
 }
 </style>
