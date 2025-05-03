@@ -426,11 +426,6 @@ export default {
   background-color: var(--color-buttonselected-bg);
 }
 
-@media (max-width: 600px) {
-  .start-view__user-section {
-  }
-}
-
 /* --- User Section Styles Ends --- */
 
 /*--- Balance Modal Styles ---*/
