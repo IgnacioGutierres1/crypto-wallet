@@ -348,6 +348,18 @@ export default {
 
 /* --- User Info Modal Styles --- */
 
+.start-view__login-modal-userinfo-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1010;
+}
+
 .start-view__login-modal-userinfo {
   display: flex;
   flex-direction: column;
@@ -357,8 +369,10 @@ export default {
   align-items: center;
   gap: 10px;
   position: fixed;
-  width: 20%;
-  height: 20%;
+  min-width: 260px;
+  max-width: 278px;
+  min-height: 130px;
+  max-height: 140px;
   background-color: var(--color-modal-bg);
   box-shadow: var(--modal-shadow);
   border-radius: 10px;
