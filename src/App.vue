@@ -42,6 +42,7 @@ export default {
   --color-buttonselected-bg: #345ad6dc;
   --color-linkselected-bg: #0a0a0a;
   --modal-shadow: 0 0 15px #0d36be59;
+  --color-tableborder: #808080a1;
 }
 
 html,
@@ -62,7 +63,7 @@ body,
   width: calc(100dvw - 170px);
   height: 100dvh;
   margin-left: 170px;
-  padding: 20px 10px;
+  padding: 30px 20px;
   flex: 1;
 }
 

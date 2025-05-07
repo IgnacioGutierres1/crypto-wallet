@@ -194,7 +194,6 @@ export default {
 
 .start-view {
   display: flex;
-  padding: 10px;
   flex-direction: column;
   flex: 1;
 }

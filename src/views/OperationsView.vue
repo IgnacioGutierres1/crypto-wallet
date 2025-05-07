@@ -220,25 +220,25 @@ export default {
 
 .operations-view {
   display: flex;
-  width: 80vw;
-  min-height: 50vh;
-  margin: 0 auto;
   flex-direction: column;
+  flex: 1;
 }
 
 .operations-view__title {
   align-self: center;
   padding-bottom: 20px;
   width: 100%;
+  min-width: 430px;
   border-bottom: 5px solid;
   border-image-source: linear-gradient(
     to right,
     transparent 0%,
-    #0009 50%,
+    var(--color-line-decoration) 50%,
     transparent 100%
   );
   border-image-slice: 1;
 }
+
 /* --- Operations View Styles ENDS --- */
 
 /* --- Coins Styles --- */
@@ -246,11 +246,15 @@ export default {
 .operations-view__coins {
   display: flex;
   margin: 15px;
-  min-height: 80vh;
+  padding: 18px 22px;
+  min-height: 50vh;
+  min-width: 300px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
+  background-color: var(--color-sections-bg);
+  border-radius: 10px;
 }
 
 /* --- Exchanges Select Styles --- */
@@ -263,10 +267,14 @@ export default {
 
 .operations-view__coins-select {
   display: flex;
-  margin: 5px;
-  padding: 5px;
+  margin: 10px;
+  padding: 8px;
   align-self: start;
   justify-self: start;
+  color: var(--color-font);
+  background-color: var(--color-main-bg);
+  outline: none;
+  border: 1px solid var(--color-button-bg);
 }
 
 /* --- Exchanges Select Styles ENDS --- */
@@ -275,25 +283,27 @@ export default {
 
 .operations-view__coins-table {
   width: 60%;
+  min-width: 300px;
   margin: 10px;
   table-layout: fixed;
   border-collapse: collapse;
+  color: var(--color-font);
 }
 
 .operations-view__coins-column-header {
   padding: 8px 10px;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  border-top: 1px solid var(--color-tableborder);
+  border-bottom: 1px solid var(--color-tableborder);
 }
 
 .coins-row:hover {
-  background-color: #0001;
+  background-color: #00000075;
   cursor: pointer;
 }
 
 .operations-view__coins-cell {
   padding: 12px 5px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--color-tableborder);
 }
 
 /* --- Coins Table Styles ENDS--- */
@@ -309,7 +319,7 @@ export default {
   position: fixed;
   width: 30%;
   height: 70%;
-  background-color: #f5f5f5;
+  background-color: var(--color-modal-bg);
   border-radius: 10px;
 }
 

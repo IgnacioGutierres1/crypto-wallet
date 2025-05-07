@@ -229,7 +229,7 @@ export default {
   align-items: center;
   gap: 8px;
   height: 30px;
-  padding: 12px 6px;
+  padding: 15px 8px;
   margin: 10px;
   position: absolute;
   bottom: 0;
