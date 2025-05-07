@@ -8,7 +8,12 @@
 
     <!-- Modal Overlay Blur Section Ends -->
 
-    <h1 class="operations-view__title">Compra y Venta de CryptoActivos</h1>
+    <h1
+      class="operations-view__title"
+      :class="{ 'title-to-right': sidebarExpanded }"
+    >
+      Compra y Venta de CryptoActivos
+    </h1>
 
     <!-- Coins Section -->
 
@@ -219,6 +224,7 @@ export default {
   computed: {
     ...mapGetters("cryptostore", ["cryptos", "exchanges"]),
     ...mapGetters("user", ["userName", "userId", "balance", "portfolio"]),
+    ...mapGetters("ui", ["sidebarExpanded"]),
     getUserId() {
       return this.userId;
     },
@@ -249,12 +255,12 @@ export default {
 
 .operations-view__title {
   /* Se centra debido a que hereda align-items: stretch del contenedor operations-view */
-  align-self: start;
-  padding-bottom: 20px;
+  align-self: center;
+  padding: 10px 10px 15px 10px;
   width: 100%;
-  min-width: 430px;
+  min-width: 390px;
   border-bottom: 5px solid;
-  margin-bottom: 15px;
+  margin: 0 0 15px 10px;
   border-image-source: linear-gradient(
     to right,
     transparent 0%,
@@ -262,6 +268,10 @@ export default {
     transparent 100%
   );
   border-image-slice: 1;
+}
+
+.title-to-right {
+  align-self: start;
 }
 
 /* --- Operations View Styles Ends --- */
