@@ -2,6 +2,12 @@
   <!-- Operations View Section -->
 
   <div class="operations-view">
+    <!-- Modal Overlay Blur Section -->
+
+    <div v-if="coinClicked" class="modal-overlay"></div>
+
+    <!-- Modal Overlay Blur Section Ends -->
+
     <h1 class="operations-view__title">Compra y Venta de CryptoActivos</h1>
 
     <!-- Coins Section -->
@@ -53,37 +59,54 @@
 
       <!-- Coins Modal Section -->
 
-      <div v-if="coinClicked" class="operations-view__coinsmodal">
-        <a @click="closeModal" class="operations-view__coinsmodal-closebutton"
-          >X</a
-        >
-        <h2>{{ selectedCoin }}</h2>
-        <p>Precio: {{ convertPrice(selectedPrice) }}</p>
-        <p>
-          Dinero disponible: $
-          {{ parseFloat(balance.toFixed(2)).toLocaleString("es-AR") }}
-        </p>
-        <p>
-          Cantidad de {{ selectedCoin }} disponible:
-          {{ portfolio[selectedCoin] }}
-        </p>
-        <input
-          type="number"
-          v-model="moneyQuantity"
-          placeholder="Monto a gastar"
-          step="0.01"
-        />
-        <p>
-          Cantidad de {{ selectedCoin }}:
-          {{ cryptoQuantity() }}
-        </p>
-        <div class="operations-view__coinsmodal-buttons">
-          <button class="operations-view__coinsmodal-button" @click="buy">
-            Comprar
-          </button>
-          <button class="operations-view__coinsmodal-button" @click="sell">
-            Vender
-          </button>
+      <div v-if="coinClicked" class="operations-view__coinsmodal-overlay">
+        <div class="operations-view__coinsmodal">
+          <span
+            @click="closeModal"
+            class="material-symbols-outlined operations-view__coinsmodal-closebutton"
+          >
+            close
+          </span>
+          <span class="material-symbols-outlined"> currency_exchange </span>
+          <h2>{{ selectedCoin }}</h2>
+          <p>Precio: {{ convertPrice(selectedPrice) }}</p>
+          <p>
+            Dinero disponible: $
+            {{ parseFloat(balance.toFixed(2)).toLocaleString("es-AR") }}
+          </p>
+          <p>
+            Cantidad de {{ selectedCoin }} disponible:
+            {{ portfolio[selectedCoin] }}
+          </p>
+          <input
+            class="operations-view__coinsmodal-input"
+            type="number"
+            v-model="moneyQuantity"
+            placeholder="Monto a gastar"
+            step="0.01"
+          />
+          <p>
+            Cantidad de {{ selectedCoin }}:
+            {{ cryptoQuantity() }}
+          </p>
+          <div class="operations-view__coinsmodal-buttons">
+            <button class="operations-view__coinsmodal-button" @click="buy">
+              Comprar
+              <span
+                class="material-symbols-outlined operations-view__coinsmodal-buttonsymbol"
+              >
+                paid
+              </span>
+            </button>
+            <button class="operations-view__coinsmodal-button" @click="sell">
+              Vender
+              <span
+                class="material-symbols-outlined operations-view__coinsmodal-buttonsymbol"
+              >
+                sell
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -225,11 +248,13 @@ export default {
 }
 
 .operations-view__title {
-  align-self: center;
+  /* Se centra debido a que hereda align-items: stretch del contenedor operations-view */
+  align-self: start;
   padding-bottom: 20px;
   width: 100%;
   min-width: 430px;
   border-bottom: 5px solid;
+  margin-bottom: 15px;
   border-image-source: linear-gradient(
     to right,
     transparent 0%,
@@ -239,7 +264,22 @@ export default {
   border-image-slice: 1;
 }
 
-/* --- Operations View Styles ENDS --- */
+/* --- Operations View Styles Ends --- */
+
+/* --- Modal Overlay Blur Styles ---  */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(1px);
+  background-color: #0008;
+  z-index: 1000;
+}
+
+/* --- Modal Overlay Blur Styles Ends --- */
 
 /* --- Coins Styles --- */
 
@@ -310,6 +350,18 @@ export default {
 
 /* --- Coins Modal Styles --- */
 
+.operations-view__coinsmodal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1010;
+}
+
 .operations-view__coinsmodal {
   display: flex;
   flex-direction: column;
@@ -317,10 +369,16 @@ export default {
   align-items: center;
   gap: 10px;
   position: fixed;
-  width: 30%;
-  height: 70%;
+  min-width: 368px;
+  width: 30dvw;
+  max-width: 378px;
+  min-height: 381px;
+  height: 70dvh;
+  max-height: 390px;
   background-color: var(--color-modal-bg);
+  box-shadow: var(--modal-shadow);
   border-radius: 10px;
+  z-index: 1010;
 }
 
 .operations-view__coinsmodal-closebutton {
@@ -331,7 +389,26 @@ export default {
   cursor: pointer;
 }
 
+.operations-view__coinsmodal-input {
+  width: auto;
+  color: var(--color-font);
+  background-color: rgba(255, 255, 255, 0.014);
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  outline: none;
+  border-radius: 5px;
+}
+
+.operations-view__coinsmodal-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .operations-view__coinsmodal-button {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
   margin: 5px;
   padding: 10px 8px;
   border-radius: 4px;
@@ -339,6 +416,14 @@ export default {
   color: #fffe;
   background-color: #1f2d5a;
   cursor: pointer;
+}
+
+.operations-view__coinsmodal-button:hover {
+  background-color: var(--color-buttonselected-bg);
+}
+
+.operations-view__coinsmodal-buttonsymbol {
+  font-size: 16px;
 }
 
 /* --- Coins Modal Styles ENDS --- */

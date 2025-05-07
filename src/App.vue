@@ -60,15 +60,17 @@ body,
 }
 
 .main-content {
-  width: calc(100dvw - 170px);
+  min-width: calc(100dvw - 170px);
   height: 100dvh;
   margin-left: 170px;
   padding: 30px 20px;
   flex: 1;
+  flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 .sidebar-expanded {
-  width: calc(100dvw - 50px);
+  min-width: calc(100dvw - 50px);
   margin-left: 50px;
 }
 </style>

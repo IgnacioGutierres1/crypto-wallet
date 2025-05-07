@@ -9,7 +9,7 @@
       class="modal-overlay"
     ></div>
 
-    <!-- Modal Overlay Blur Section ENDS -->
+    <!-- Modal Overlay Blur Section Ends -->
 
     <!-- LogIn Modal Section -->
 
@@ -213,7 +213,7 @@ export default {
   z-index: 1000;
 }
 
-/* --- Modal Overlay Blur Styles ENDS --- */
+/* --- Modal Overlay Blur Styles Ends --- */
 
 /* --- Login Modal Styles --- */
 
