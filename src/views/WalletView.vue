@@ -1,6 +1,12 @@
 <template>
   <!-- Wallet View Section -->
   <div class="wallet-view">
+    <!-- Modal Overlay Blur Section -->
+
+    <div v-if="modalEdit || modalDelete" class="modal-overlay"></div>
+
+    <!-- Modal Overlay Blur Section Ends -->
+
     <h1 class="wallet-view__title">Wallet</h1>
     <h3 class="wallet-view__balance">
       Saldo Actual: $
@@ -21,7 +27,7 @@
         </thead>
         <tbody>
           <tr
-            class="portfolio-row-coins"
+            class="wallet-view__portfolio-row-coins"
             v-for="(cryptoAmount, crypto) in portfolio"
             :key="crypto"
           >
@@ -281,25 +287,39 @@ export default {
 </script>
 
 <style scoped>
+/* --- Modal Overlay Blur Styles ---  */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(1px);
+  background-color: #0008;
+  z-index: 1000;
+}
+
+/* --- Modal Overlay Blur Styles Ends --- */
+
 /* --- Wallet Styles --- */
 
 .wallet-view {
   display: flex;
-  width: 90vw;
-  min-height: 50vh;
-  margin: 0 auto;
   flex-direction: column;
+  flex: 1;
 }
 
 .wallet-view__title {
   align-self: center;
-  width: 85%;
-  padding: 0 0 20px 0;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+  width: 100%;
   border-bottom: 5px solid;
   border-image-source: linear-gradient(
     to right,
     transparent 0%,
-    #0009 50%,
+    var(--color-line-decoration) 50%,
     transparent 100%
   );
   border-image-slice: 1;
@@ -312,7 +332,7 @@ export default {
   margin: 20px 0;
 }
 
-/* --- Wallet Styles ENDS --- */
+/* --- Wallet Styles Ends --- */
 
 /* --- Portfolio Styles --- */
 
@@ -320,15 +340,14 @@ export default {
   display: flex;
   margin: 20px 15px;
   padding: 10px;
-  min-height: 20vh;
+  min-height: 135px;
+  min-width: 500px;
   width: 50%;
   flex-direction: column;
   align-items: center;
   align-self: center;
-  justify-self: center;
-  justify-content: center;
-  border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
+  background-color: var(--color-sections-bg);
 }
 
 .wallet-view__portfolio-table {
@@ -340,17 +359,23 @@ export default {
 
 .wallet-view__portfolio-column-header {
   padding: 8px 10px;
+  border-top: 1px solid var(--color-tableborder);
+  border-bottom: 1px solid var(--color-tableborder);
+}
+
+.wallet-view__portfolio-row-coins {
+  border-bottom: 1px solid var(--color-tableborder);
 }
 
 .wallet-view__portfolio-cell {
-  padding: 5px;
+  padding: 8px 10px;
 }
 
 .portfolio-row-total {
   border-top: 1px solid black;
 }
 
-/* --- Portfolio Styles ENDS --- */
+/* --- Portfolio Styles Ends --- */
 
 /* --- Investments Analysis Styles --- */
 

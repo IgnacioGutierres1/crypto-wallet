@@ -66,7 +66,6 @@ body,
   padding: 30px 20px;
   flex: 1;
   flex-shrink: 0;
-  overflow-x: hidden;
 }
 
 .sidebar-expanded {
