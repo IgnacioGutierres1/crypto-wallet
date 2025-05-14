@@ -341,8 +341,8 @@ export default {
   margin: 20px 15px;
   padding: 10px;
   min-height: 135px;
-  min-width: 500px;
-  width: 50%;
+  min-width: 450px;
+  width: auto;
   flex-direction: column;
   align-items: center;
   align-self: center;
@@ -353,7 +353,7 @@ export default {
 .wallet-view__portfolio-table {
   width: 100%;
   margin: 10px;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
 }
 
@@ -361,6 +361,7 @@ export default {
   padding: 8px 10px;
   border-top: 1px solid var(--color-tableborder);
   border-bottom: 1px solid var(--color-tableborder);
+  white-space: nowrap;
 }
 
 .wallet-view__portfolio-row-coins {
@@ -369,6 +370,7 @@ export default {
 
 .wallet-view__portfolio-cell {
   padding: 8px 10px;
+  white-space: nowrap;
 }
 
 .portfolio-row-total {
@@ -397,7 +399,7 @@ export default {
 .wallet-view__investments-table {
   width: 100%;
   margin: 10px;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
 }
 
@@ -431,7 +433,7 @@ export default {
 .wallet-view__history-table {
   width: 100%;
   margin: 10px;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
 }
 
