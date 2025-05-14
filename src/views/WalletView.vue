@@ -60,7 +60,7 @@
       </table>
     </div>
 
-    <!-- Portfolio Section ENDS -->
+    <!-- Portfolio Section Ends -->
 
     <!-- Investments Analysis Section -->
 
@@ -75,7 +75,7 @@
         </thead>
         <tbody>
           <tr
-            class="investments-row-analysis"
+            class="wallet-view__investments-row-analysis"
             v-for="(result, coin) in investmentsAnalysis"
             :key="coin"
           >
@@ -385,15 +385,16 @@ export default {
   display: flex;
   margin: 20px 15px;
   padding: 10px;
-  min-height: 20vh;
-  width: 50%;
+  min-height: 135px;
+  min-width: 500px;
+  max-width: 550px;
   flex-direction: column;
   align-items: center;
   align-self: center;
-  justify-self: center;
+  /* justify-self: center; */
   justify-content: center;
-  border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
+  background-color: var(--color-sections-bg);
 }
 
 .wallet-view__investments-table {
@@ -405,10 +406,16 @@ export default {
 
 .wallet-view__investments-column-header {
   padding: 8px 10px;
+  border-top: 1px solid var(--color-tableborder);
+  border-bottom: 1px solid var(--color-tableborder);
+}
+
+.wallet-view__investements-row-analysis {
+  border-bottom: 1px solid var(--color-tableborder);
 }
 
 .wallet-view__investments-cell {
-  padding: 5px;
+  padding: 8px 10px;
 }
 
 /* --- Investments Analysis Styles ENDS --- */
@@ -420,14 +427,15 @@ export default {
   margin: 20px 15px 80px 15px;
   padding: 10px 4px;
   min-height: 20vh;
-  width: 100%;
+  min-width: 1060px;
+  max-width: 1100px;
   flex-direction: column;
   align-items: center;
   align-self: center;
   justify-self: center;
   justify-content: center;
-  border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
+  background-color: var(--color-sections-bg);
 }
 
 .wallet-view__history-table {
@@ -439,8 +447,8 @@ export default {
 
 .wallet-view__history-column-header {
   padding: 8px 10px;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  border-top: 1px solid var(--color-tableborder);
+  border-bottom: 1px solid var(--color-tableborder);
 }
 
 .wallet-view__history-cell {
