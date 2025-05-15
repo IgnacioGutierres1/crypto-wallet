@@ -150,27 +150,29 @@
     <!-- History Section ENDS -->
 
     <!-- Edit Moviment Modal Section -->
-
-    <div v-if="modalEdit" class="wallet-view__editmodal">
-      <a
-        class="wallet-view__editmodal-closebutton"
-        @click="openCloseModal('edit')"
-        >X</a
-      >
-      <h3 class="wallet-view__editmodal-title">Editar Movimiento</h3>
-      <p>Ingresar monto:</p>
-      <p>{{ message }}</p>
-      <input type="number" v-model="newAmount" />
-      <div class="wallet-view__editmodal-buttons">
-        <button class="wallet-view__editmodal-button" @click="editMoviment">
-          Aceptar
-        </button>
-        <button
-          class="wallet-view__editmodal-button"
+    <div v-if="modalEdit" class="wallet-view__editmodal-overlay">
+      <div class="wallet-view__editmodal">
+        <span
           @click="openCloseModal('edit')"
+          class="material-symbols-outlined wallet-view__editmodal-closebutton"
         >
-          Cancelar
-        </button>
+          close
+        </span>
+        <h3 class="wallet-view__editmodal-title">Editar Movimiento</h3>
+        <p>Ingresar monto:</p>
+        <p>{{ message }}</p>
+        <input type="number" v-model="newAmount" />
+        <div class="wallet-view__editmodal-buttons">
+          <button class="wallet-view__editmodal-button" @click="editMoviment">
+            Aceptar
+          </button>
+          <button
+            class="wallet-view__editmodal-button"
+            @click="openCloseModal('edit')"
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
 
@@ -178,25 +180,31 @@
 
     <!-- Delete Moviment Modal Section -->
 
-    <div v-if="modalDelete" class="wallet-view__deletemodal">
-      <a
-        class="wallet-view__deletemodal-closebutton"
-        @click="openCloseModal('delete')"
-        >X</a
-      >
-      <h3 class="wallet-view__deletemodal-title">Borrar Movimiento</h3>
-      <p>Desea Eliminar el movimiento?</p>
-      <p>{{ message }}</p>
-      <div class="wallet-view__deletemodal-buttons">
-        <button class="wallet-view__deletemodal-button" @click="deleteMoviment">
-          Si
-        </button>
-        <button
-          class="wallet-view__deletemodal-button"
+    <div v-if="modalDelete" class="wallet-view__deletemodal-overlay">
+      <div class="wallet-view__deletemodal">
+        <span
           @click="openCloseModal('delete')"
+          class="material-symbols-outlined wallet-view__deletemodal-closebutton"
         >
-          No
-        </button>
+          close
+        </span>
+        <h3 class="wallet-view__deletemodal-title">Borrar Movimiento</h3>
+        <p>Desea Eliminar el movimiento?</p>
+        <p>{{ message }}</p>
+        <div class="wallet-view__deletemodal-buttons">
+          <button
+            class="wallet-view__deletemodal-button"
+            @click="deleteMoviment"
+          >
+            Si
+          </button>
+          <button
+            class="wallet-view__deletemodal-button"
+            @click="openCloseModal('delete')"
+          >
+            No
+          </button>
+        </div>
       </div>
     </div>
 
@@ -293,8 +301,8 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
+  height: 500vh;
+  width: 500vw;
   backdrop-filter: blur(1px);
   background-color: #0008;
   z-index: 1000;
@@ -330,6 +338,7 @@ export default {
   justify-content: start;
   width: 100%;
   margin: 20px 0;
+  white-space: nowrap;
 }
 
 /* --- Wallet Styles Ends --- */
@@ -341,7 +350,7 @@ export default {
   margin: 20px 15px;
   padding: 10px;
   min-height: 135px;
-  min-width: 450px;
+  /* min-width: 450px; */
   width: auto;
   flex-direction: column;
   align-items: center;
@@ -375,6 +384,12 @@ export default {
 
 .portfolio-row-total {
   border-top: 1px solid black;
+}
+
+@media screen and (max-width: 600px) {
+  .wallet-view__portfolio {
+    align-self: start;
+  }
 }
 
 /* --- Portfolio Styles Ends --- */
@@ -416,19 +431,27 @@ export default {
 
 .wallet-view__investments-cell {
   padding: 8px 10px;
+  white-space: nowrap;
 }
 
-/* --- Investments Analysis Styles ENDS --- */
+@media screen and (max-width: 600px) {
+  .wallet-view__investments {
+    align-self: start;
+  }
+}
+
+/* --- Investments Analysis Styles Ends --- */
 
 /* --- History Styles --- */
 
 .wallet-view__history {
   display: flex;
   margin: 20px 15px 80px 15px;
-  padding: 10px 4px;
-  min-height: 20vh;
+  padding: 10px;
+  /* min-height: 20vh; */
   min-width: 1060px;
-  max-width: 1100px;
+  /* max-width: 1100px; */
+  /* width: auto; */
   flex-direction: column;
   align-items: center;
   align-self: center;
@@ -452,24 +475,47 @@ export default {
 }
 
 .wallet-view__history-cell {
+  border-top: 1px solid var(--color-tableborder);
   padding: 5px;
-  width: 100%;
-  border-bottom: 1px solid black;
+  overflow: auto;
+  white-space: nowrap;
 }
 
 .wallet-view__history-button {
   margin: 5px;
-  padding: 5px 5px;
+  padding: 5px 8px;
   border-radius: 4px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
   cursor: pointer;
+}
+
+.wallet-view__history-button:hover {
+  background-color: var(--color-buttonselected-bg);
+}
+
+@media screen and (max-width: 600px) {
+  .wallet-view__history {
+    align-self: start;
+  }
 }
 
 /* --- History Styles ENDS --- */
 
 /* --- Edit Moviment Modal Styles --- */
+
+.wallet-view__editmodal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1010;
+}
 
 .wallet-view__editmodal {
   display: flex;
@@ -480,10 +526,16 @@ export default {
   align-self: center;
   gap: 10px;
   position: fixed;
-  height: 40%;
-  width: 30%;
-  background-color: #f5f5f5;
+  min-height: 200px;
+  height: 40dvh;
+  max-height: 400px;
+  min-width: 300px;
+  width: 30dvw;
+  max-width: 400px;
+  background-color: var(--color-modal-bg);
+  box-shadow: var(--modal-shadow);
   border-radius: 10px;
+  z-index: 1010;
 }
 
 .wallet-view__editmodal-closebutton {
@@ -496,6 +548,8 @@ export default {
 
 .wallet-view__editmodal-buttons {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 8px;
 }
 
@@ -505,13 +559,29 @@ export default {
   border-radius: 4px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
   cursor: pointer;
+}
+
+.wallet-view__editmodal-button:hover {
+  background-color: var(--color-buttonselected-bg);
 }
 
 /* --- Edit Moviment Modal Styles ENDS --- */
 
 /* --- Delete Moviment Modal Styles --- */
+
+.wallet-view__deletemodal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1010;
+}
 
 .wallet-view__deletemodal {
   display: flex;
@@ -522,10 +592,16 @@ export default {
   align-self: center;
   gap: 10px;
   position: fixed;
-  height: 40%;
-  width: 30%;
-  background-color: #f5f5f5;
+  min-height: 150px;
+  height: 30dvh;
+  max-height: 200px;
+  min-width: 300px;
+  width: 20dvw;
+  max-width: 400px;
+  background-color: var(--color-modal-bg);
+  box-shadow: var(--modal-shadow);
   border-radius: 10px;
+  z-index: 1010;
 }
 
 .wallet-view__deletemodal-closebutton {
@@ -538,17 +614,24 @@ export default {
 
 .wallet-view__deletemodal-buttons {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 8px;
 }
 
 .wallet-view__deletemodal-button {
   margin: 5px;
-  padding: 5px 5px;
+  padding: 5px 8px;
+  width: 32px;
   border-radius: 4px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
   cursor: pointer;
+}
+
+.wallet-view__deletemodal-button:hover {
+  background-color: var(--color-buttonselected-bg);
 }
 
 /* --- Delete Moviment Modal Styles ENDS --- */

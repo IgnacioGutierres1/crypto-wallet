@@ -10,7 +10,7 @@
 
     <h1
       class="operations-view__title"
-      :class="{ 'title-to-right': sidebarExpanded }"
+      :class="{ 'operations-view__title-to-right': sidebarExpanded }"
     >
       Compra y Venta de CryptoActivos
     </h1>
@@ -270,7 +270,7 @@ export default {
   border-image-slice: 1;
 }
 
-.title-to-right {
+.operations-view__title-to-right {
   align-self: start;
 }
 
@@ -424,7 +424,7 @@ export default {
   border-radius: 4px;
   border-style: none;
   color: #fffe;
-  background-color: #1f2d5a;
+  background-color: var(--color-button-bg);
   cursor: pointer;
 }
 
