@@ -32,7 +32,11 @@ export default {
       return state.history;
     },
     login(state) {
-      return state.user.userId !== "" && state.user.userId !== null;
+      return (
+        typeof state.user.userId === "string" &&
+        state.user.userId.trim() !== "" &&
+        state.user.userId !== null
+      );
     },
   },
   mutations: {
@@ -63,35 +67,48 @@ export default {
     },
   },
   actions: {
+    /* --- Login User Section --- */
+
     saveUser({ commit, state }, userName) {
-      var tempUsers = localStorage.getItem("users");
       var usersSaved = {};
       var msg = "";
 
-      if (tempUsers !== null) {
-        usersSaved = JSON.parse(tempUsers);
+      try {
+        const tempUsers = localStorage.getItem("users");
+
+        if (
+          typeof tempUsers === "string" &&
+          tempUsers.trim().length > 0 &&
+          tempUsers !== null
+        ) {
+          usersSaved = JSON.parse(tempUsers);
+        }
+
+        if (usersSaved[userName]) {
+          commit("setUser", {
+            userName /* ShortHand ya que tienen el mismo nombre */,
+            userId: usersSaved[userName],
+            balance: state.user.balance || 0,
+            portfolio: state.user.portfolio || {},
+          });
+          msg = "Usuario Encontrado ✅";
+        } else {
+          const alphanumericId = Math.random().toString(36).slice(2, 12);
+          usersSaved[userName] = alphanumericId;
+          localStorage.setItem("users", JSON.stringify(usersSaved));
+          commit("setUser", {
+            userName,
+            userId: alphanumericId,
+            balance: 0,
+            portfolio: {},
+          });
+          msg = "Se ha iniciado sesión ✅";
+        }
+      } catch (error) {
+        console.error("Error al acceder a localStorage o parsear JSON:", error);
+        msg = "Ocurrió un error al acceder a los datos ⚠️";
       }
 
-      if (usersSaved[userName]) {
-        commit("setUser", {
-          userName: userName,
-          userId: usersSaved[userName],
-          balance: state.user.balance || 0,
-          portfolio: state.user.portfolio || {},
-        });
-        msg = "Usuario Encontrado ✅";
-      } else {
-        const alphanumericId = Math.random().toString(36).slice(2, 12);
-        usersSaved[userName] = alphanumericId;
-        localStorage.setItem("users", JSON.stringify(usersSaved));
-        commit("setUser", {
-          userName: userName,
-          userId: alphanumericId,
-          balance: 0,
-          portfolio: {},
-        });
-        msg = "Se ha iniciado sesión ✅";
-      }
       return msg;
     },
 
@@ -105,21 +122,30 @@ export default {
       localStorage.removeItem("user");
     },
 
+    /* --- Login User Section Ends --- */
+
+    /* --- Balance User Section --- */
+
     editBalance({ commit, state }, payload) {
       var newBalance = parseFloat(state.user.balance);
       var msg = "";
-      if (payload.action === "deposit") {
-        newBalance += payload.amount;
-        msg = `Se ingreso correctamente $${payload.amount} ✅`;
-      }
-      if (payload.action === "withdraw") {
-        newBalance -= payload.amount;
-        msg = `Se extrajo correctamente $${payload.amount} ✅`;
+
+      switch (payload.action) {
+        case "deposit":
+          newBalance += payload.amount;
+          msg = `Se ingresó correctamente $${payload.amount} ✅`;
+          break;
+        case "withdraw":
+          newBalance -= payload.amount;
+          msg = `Se extrajo correctamente $${payload.amount} ✅`;
+          break;
       }
       commit("setBalance", newBalance);
       console.log("Nuevo Balance: ", newBalance);
       return msg;
     },
+
+    /* --- Balance User Section Ends --- */
 
     async postOperation({ commit, state }, payload) {
       console.log("Objeto antes de data", payload);

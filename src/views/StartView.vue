@@ -47,11 +47,12 @@
 
     <div v-if="userLoginModal" class="start-view__login-modal-userinfo-overlay">
       <div class="start-view__login-modal-userinfo">
-        <a
+        <span
           @click="closeUserModal"
-          class="start-view__login-modal-userinfo-closebutton"
-          >X</a
+          class="material-symbols-outlined start-view__login-modal-userinfo-closebutton"
         >
+          close
+        </span>
         <p>{{ message }}</p>
         <p>Username: {{ userName }}</p>
         <p>ID: {{ getUserId }}</p>
@@ -163,19 +164,27 @@ export default {
     },
 
     async depositMoney() {
-      if (this.newBalanceAmount > 0) {
+      if (!isNaN(this.newBalanceAmount) && this.newBalanceAmount > 0) {
         this.message = await this.editBalance({
           action: "deposit",
           amount: this.newBalanceAmount,
         });
+      } else {
+        this.message = "Monto Invalido ⚠️";
       }
     },
     async withdrawMoney() {
-      if (this.newBalanceAmount > 0 && this.balance >= this.newBalanceAmount) {
+      if (
+        !isNaN(this.newBalanceAmount) &&
+        this.newBalanceAmount > 0 &&
+        this.balance >= this.newBalanceAmount
+      ) {
         this.message = await this.editBalance({
           action: "withdraw",
           amount: this.newBalanceAmount,
         });
+      } else {
+        this.message = "Monto Invalido ⚠️";
       }
     },
   },
