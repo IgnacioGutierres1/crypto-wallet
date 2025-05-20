@@ -53,9 +53,10 @@
             @click="openModal(coin, coinData.price)"
           >
             <td class="operations-view__coins-cell">{{ coin }}</td>
-            <td class="operations-view__coins-cell">
-              {{ convertPrice(coinData.price) }}
+            <td v-if="coinData.price" class="operations-view__coins-cell">
+              $ {{ coinData.price.toLocaleString("es-AR") }}
             </td>
+            <td v-else class="operations-view__coins-cell">-</td>
           </tr>
         </tbody>
       </table>
@@ -74,7 +75,10 @@
           </span>
           <span class="material-symbols-outlined"> currency_exchange </span>
           <h2>{{ selectedCoin }}</h2>
-          <p>Precio: {{ convertPrice(selectedPrice) }}</p>
+          <p v-if="typeof selectedPrice === 'number'">
+            Precio: {{ selectedPrice.toLocaleString("es-AR") }}
+          </p>
+          <p v-else>Precio: {{ selectedPrice }}</p>
           <p>
             Dinero disponible: $
             {{ parseFloat(balance.toFixed(2)).toLocaleString("es-AR") }}
@@ -139,46 +143,57 @@ export default {
   methods: {
     ...mapActions("cryptostore", ["fetchCryptos"]),
     ...mapActions("user", ["postOperation"]),
-    convertPrice(defaultPrice) {
-      if (defaultPrice) {
-        return "$ " + defaultPrice.toLocaleString("es-AR");
-      } else {
-        return "-";
-      }
-    },
+
+    /* --- Modal Methods --- */
+
     openModal(coin, price) {
       this.selectedCoin = coin;
-      this.selectedPrice = price;
+      if (price > 0 && !isNaN(price)) {
+        this.selectedPrice = price;
+      } else {
+        this.selectedPrice = "No Disponible";
+      }
       this.coinClicked = true;
     },
 
+    closeModal() {
+      this.coinClicked = false;
+      this.moneyQuantity = "";
+    },
+
+    /* --- Modal Methods Ends --- */
+
+    /* --- Crypto Quantity Calculation Method --- */
+
     cryptoQuantity() {
-      if (this.moneyCheck() !== null && !isNaN(this.moneyCheck())) {
-        return parseFloat(this.moneyCheck() / this.selectedPrice).toFixed(22);
+      if (
+        this.moneyQuantity > 0 &&
+        this.moneyQuantity !== null &&
+        !isNaN(this.moneyQuantity)
+      ) {
+        return parseFloat(this.moneyQuantity / this.selectedPrice).toFixed(22);
       } else {
         return "";
       }
     },
 
-    moneyCheck() {
-      if (this.moneyQuantity > 0) {
-        return this.moneyQuantity;
-      }
-    },
+    /* --- Crypto Quantity Calculation Method Ends --- */
+
+    /* --- Buy and Sell Methods --- */
 
     buy() {
-      if (this.moneyCheck() === null) {
+      if (this.moneyQuantity === null) {
         return;
       }
 
-      if (this.moneyCheck() <= this.balance) {
+      if (this.moneyQuantity > 0 && this.moneyQuantity <= this.balance) {
         try {
           const response = this.postOperation({
-            userId: this.getUserId,
+            userId: this.userId,
             action: "purchase",
             coin: this.selectedCoin,
             amount: this.cryptoQuantity(),
-            money: this.moneyCheck(),
+            money: this.moneyQuantity,
             datetime: new Date().toISOString(),
             operation: "Compra",
           });
@@ -192,18 +207,18 @@ export default {
     },
 
     sell() {
-      if (this.moneyCheck() === null) {
+      if (this.moneyQuantity === null) {
         return;
       }
 
       if (this.cryptoQuantity() < this.portfolio[this.selectedCoin]) {
         try {
           const response = this.postOperation({
-            userId: this.getUserId,
+            userId: this.userId,
             action: "sale",
             coin: this.selectedCoin,
             amount: this.cryptoQuantity(),
-            money: this.moneyCheck(),
+            money: this.moneyQuantity,
             datetime: new Date().toISOString(),
             operation: "Venta",
           });
@@ -216,18 +231,12 @@ export default {
       }
     },
 
-    closeModal() {
-      this.coinClicked = false;
-      this.moneyQuantity = "";
-    },
+    /* --- Buy and Sell Methods Ends --- */
   },
   computed: {
     ...mapGetters("cryptostore", ["cryptos", "exchanges"]),
     ...mapGetters("user", ["userName", "userId", "balance", "portfolio"]),
     ...mapGetters("ui", ["sidebarExpanded"]),
-    getUserId() {
-      return this.userId;
-    },
   },
   async mounted() {
     try {

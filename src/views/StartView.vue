@@ -55,7 +55,7 @@
         </span>
         <p>{{ message }}</p>
         <p>Username: {{ userName }}</p>
-        <p>ID: {{ getUserId }}</p>
+        <p>ID: {{ userId }}</p>
       </div>
     </div>
 
@@ -191,9 +191,6 @@ export default {
 
   computed: {
     ...mapGetters("user", ["userName", "userId", "balance", "login"]),
-    getUserId() {
-      return this.userId;
-    },
   },
 };
 </script>
