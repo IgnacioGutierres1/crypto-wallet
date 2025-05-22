@@ -33,14 +33,18 @@
           >
             <td class="wallet-view__portfolio-cell">{{ crypto }}</td>
             <td class="wallet-view__portfolio-cell">{{ cryptoAmount }}</td>
-            <td class="wallet-view__portfolio-cell">
+            <td
+              v-if="updateBalance(cryptoAmount, crypto) != 0"
+              class="wallet-view__portfolio-cell"
+            >
               $
               {{
-                parseFloat(
-                  updateBalance(cryptoAmount, crypto).toFixed(2)
-                ).toLocaleString("es-AR")
+                updateBalance(cryptoAmount, crypto)
+                  .toFixed(2)
+                  .toLocaleString("es-AR")
               }}
             </td>
+            <td v-else class="wallet-view__portfolio-cell">No Disponible</td>
           </tr>
         </tbody>
         <tfoot>
@@ -137,7 +141,7 @@
                 Editar</button
               ><button
                 class="wallet-view__history-button"
-                @click="openDeleteModal(historyData._id)"
+                @click="openCloseModal('delete', historyData._id)"
               >
                 Borrar
               </button>
@@ -231,15 +235,27 @@ export default {
   },
   methods: {
     ...mapActions("user", ["loadPortfolio", "editHistory", "deleteHistory"]),
-    openCloseModal(modalType) {
+
+    /* --- Modal Methods --- */
+
+    openCloseModal(modalType, movimentId) {
       this.message = "";
-      if (modalType === "edit") {
-        this.modalEdit = !this.modalEdit;
-      }
-      if (modalType === "delete") {
-        this.modalDelete = !this.modalDelete;
+
+      switch (modalType) {
+        case "edit":
+          this.modalEdit = !this.modalEdit;
+          break;
+
+        case "delete":
+          if (movimentId === undefined) {
+            console.warn("ID del movimiento invalido");
+          }
+          this.modalDelete = !this.modalDelete;
+          this.movimentId = movimentId;
+          break;
       }
     },
+
     openEditModal(
       movimentId,
       action,
@@ -253,6 +269,16 @@ export default {
       this.originalMoneyAmount = pOriginalMoneyAmount;
       console.log("monto", this.originalMoneyAmount);
     },
+
+    openDeleteModal(movimentId) {
+      this.modalDelete = !this.modalDelete;
+      this.movimentId = movimentId;
+    },
+
+    /* --- Modal Methods Ends --- */
+
+    /* --- Edit And Delete Methods --- */
+
     async editMoviment() {
       if (this.newAmount > 0) {
         if (
@@ -271,14 +297,12 @@ export default {
         }
       }
     },
-    openDeleteModal(movimentId) {
-      this.modalDelete = !this.modalDelete;
-      this.movimentId = movimentId;
-    },
     async deleteMoviment() {
       console.log("Id a eliminar:", this.movimentId);
       this.message = await this.deleteHistory(this.movimentId);
     },
+
+    /* --- Edit And Delete Methods --- */
   },
   computed: {
     ...mapGetters("user", ["history", "balance", "portfolio"]),

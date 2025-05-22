@@ -159,6 +159,7 @@ export default {
     closeModal() {
       this.coinClicked = false;
       this.moneyQuantity = "";
+      this.selectedPrice = 0;
     },
 
     /* --- Modal Methods Ends --- */

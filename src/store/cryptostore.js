@@ -14,11 +14,14 @@ export default {
     },
     updateBalance(state) {
       return function (crypto_amount, coin) {
-        const newBalance =
-          parseFloat(crypto_amount) *
-          parseFloat(state.cryptos["ripio"][coin].price);
-
-        return parseFloat(newBalance);
+        if (state.cryptos["ripio"][coin]) {
+          const newBalance =
+            parseFloat(crypto_amount) *
+            parseFloat(state.cryptos["ripio"][coin].price);
+          return parseFloat(newBalance);
+        } else {
+          return 0;
+        }
       };
     },
     totalPortfolioBalance(state, getters, rootState) {

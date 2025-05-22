@@ -62,6 +62,10 @@ export default {
       }
       localStorage.setItem("user", JSON.stringify(state.user));
     },
+    setFullPortfolio(state, payload) {
+      state.user.portfolio = payload;
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
     setHistory(state, history) {
       state.history = history;
     },
@@ -225,6 +229,7 @@ export default {
           }
           console.log("Historial Temporal: ", newHistory);
           commit("setHistory", newHistory);
+          return newHistory;
         }
       } catch (error) {
         console.log("Error al cargar el historial", error);
@@ -293,7 +298,6 @@ export default {
     },
 
     async loadPortfolio({ commit, state, dispatch }) {
-      /* await dispatch("cryptostore/fetchCryptos", { root: true }); */
       await dispatch("loadHistory");
 
       const tempHistory = state.history;
@@ -301,28 +305,32 @@ export default {
 
       for (var key in tempHistory) {
         var transactions = tempHistory[key];
-        if (transactions.action === "Compra") {
-          if (newPortfolio[transactions.crypto_code]) {
-            newPortfolio[transactions.crypto_code] += parseFloat(
-              transactions.crypto_amount
-            );
-          } else {
-            newPortfolio[transactions.crypto_code] = parseFloat(
-              transactions.crypto_amount
-            );
-          }
-        } else if (transactions.action === "Venta") {
-          if (newPortfolio[transactions.crypto_code]) {
-            newPortfolio[transactions.crypto_code] -= parseFloat(
-              transactions.crypto_amount
-            );
-          }
+        switch (transactions.action) {
+          case "Compra":
+            if (newPortfolio[transactions.crypto_code]) {
+              newPortfolio[transactions.crypto_code] += parseFloat(
+                transactions.crypto_amount
+              );
+            } else {
+              newPortfolio[transactions.crypto_code] = parseFloat(
+                transactions.crypto_amount
+              );
+            }
+            break;
+
+          case "Venta":
+            if (newPortfolio[transactions.crypto_code]) {
+              newPortfolio[transactions.crypto_code] -= parseFloat(
+                transactions.crypto_amount
+              );
+              break;
+            }
         }
       }
 
       console.log("Portfolio: ", newPortfolio);
 
-      commit("setPortfolio", newPortfolio);
+      commit("setFullPortfolio", newPortfolio);
     },
   },
 };
