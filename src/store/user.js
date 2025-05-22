@@ -151,6 +151,8 @@ export default {
 
     /* --- Balance User Section Ends --- */
 
+    /* --- Post Operation Section --- */
+
     async postOperation({ commit, state }, payload) {
       console.log("Objeto antes de data", payload);
       var newBalance;
@@ -175,26 +177,29 @@ export default {
         );
         console.log("respuesta de la api:", apiClient);
         if (apiClient.status === 200 || apiClient.status == 201) {
-          if (payload.operation === "Compra") {
-            newBalance = state.user.balance;
-            newBalance -= postRequestData.money;
-            console.log("Nuevo Balance", newBalance);
-            commit("setBalance", newBalance);
-            commit("setPortfolio", {
-              crypto: postRequestData.crypto_code,
-              amount: parseFloat(postRequestData.crypto_amount),
-            });
-          } else if (payload.operation === "Venta") {
-            newBalance = state.user.balance;
-            newBalance += postRequestData.money;
-            console.log("Nuevo Balance", newBalance);
-            commit("setBalance", newBalance);
-            commit("setPortfolio", {
-              crypto: postRequestData.crypto_code,
-              amount: parseFloat(
-                -postRequestData.crypto_amount
-              ) /* Menos para que se reste */,
-            });
+          switch (payload.operation) {
+            case "Compra":
+              newBalance = state.user.balance;
+              newBalance -= postRequestData.money;
+              console.log("Nuevo Balance", newBalance);
+              commit("setBalance", newBalance);
+              commit("setPortfolio", {
+                crypto: postRequestData.crypto_code,
+                amount: parseFloat(postRequestData.crypto_amount),
+              });
+              break;
+            case "Venta":
+              newBalance = state.user.balance;
+              newBalance += postRequestData.money;
+              console.log("Nuevo Balance", newBalance);
+              commit("setBalance", newBalance);
+              commit("setPortfolio", {
+                crypto: postRequestData.crypto_code,
+                amount: parseFloat(
+                  -postRequestData.crypto_amount
+                ) /* Menos para que se reste */,
+              });
+              break;
           }
           alert(`${payload.operation} Exitosa`);
           return apiClient.data;
@@ -204,6 +209,50 @@ export default {
         alert(`Error en la ${payload.operation} `);
       }
     },
+
+    /* --- Post Operation Ends --- */
+
+    /* --- PortFolio Section --- */
+
+    async loadPortfolio({ commit, state, dispatch }) {
+      await dispatch("loadHistory");
+
+      const tempHistory = state.history;
+      var newPortfolio = {};
+
+      for (var key in tempHistory) {
+        var transactions = tempHistory[key];
+        switch (transactions.action) {
+          case "Compra":
+            if (newPortfolio[transactions.crypto_code]) {
+              newPortfolio[transactions.crypto_code] += parseFloat(
+                transactions.crypto_amount
+              );
+            } else {
+              newPortfolio[transactions.crypto_code] = parseFloat(
+                transactions.crypto_amount
+              );
+            }
+            break;
+
+          case "Venta":
+            if (newPortfolio[transactions.crypto_code]) {
+              newPortfolio[transactions.crypto_code] -= parseFloat(
+                transactions.crypto_amount
+              );
+              break;
+            }
+        }
+      }
+
+      console.log("Portfolio: ", newPortfolio);
+
+      commit("setFullPortfolio", newPortfolio);
+    },
+
+    /* --- Portfolio Section Ends */
+
+    /* --- History Section --- */
 
     async loadHistory({ commit, state }) {
       var newHistory = {};
@@ -295,42 +344,6 @@ export default {
         console.log("error en el patch:", error);
         return "Ocurrió un error ❌";
       }
-    },
-
-    async loadPortfolio({ commit, state, dispatch }) {
-      await dispatch("loadHistory");
-
-      const tempHistory = state.history;
-      var newPortfolio = {};
-
-      for (var key in tempHistory) {
-        var transactions = tempHistory[key];
-        switch (transactions.action) {
-          case "Compra":
-            if (newPortfolio[transactions.crypto_code]) {
-              newPortfolio[transactions.crypto_code] += parseFloat(
-                transactions.crypto_amount
-              );
-            } else {
-              newPortfolio[transactions.crypto_code] = parseFloat(
-                transactions.crypto_amount
-              );
-            }
-            break;
-
-          case "Venta":
-            if (newPortfolio[transactions.crypto_code]) {
-              newPortfolio[transactions.crypto_code] -= parseFloat(
-                transactions.crypto_amount
-              );
-              break;
-            }
-        }
-      }
-
-      console.log("Portfolio: ", newPortfolio);
-
-      commit("setFullPortfolio", newPortfolio);
     },
   },
 };

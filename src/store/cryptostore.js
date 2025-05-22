@@ -12,6 +12,9 @@ export default {
     exchanges(state) {
       return Object.keys(state.cryptos);
     },
+
+    /* --- Balance Section Getters */
+
     updateBalance(state) {
       return function (crypto_amount, coin) {
         if (state.cryptos["ripio"][coin]) {
@@ -35,6 +38,9 @@ export default {
       }
       return total;
     },
+
+    /* --- Balance Section Getters Ends --- */
+
     investmentsAnalysis(state, getters, rootState) {
       var operationsResults = {};
 
@@ -48,10 +54,19 @@ export default {
             currentValue: 0,
           };
         }
-        if (transaction.action === "Compra") {
-          operationsResults[coin].totalPurchase += transaction.money;
-        } else if (transaction.action === "Venta") {
-          operationsResults[coin].totalSale += transaction.money;
+        switch (transaction.action) {
+          case "Compra":
+            operationsResults[coin].totalPurchase += transaction.money;
+            break;
+          case "Venta":
+            operationsResults[coin].totalSale += transaction.money;
+            break;
+          default:
+            console.warn(
+              "Acción invalida dentro de analisis de inversiones",
+              transaction.action
+            );
+            break;
         }
       }
       for (var coin in rootState.user.user.portfolio) {
@@ -65,12 +80,24 @@ export default {
       var totalAnalysis = {};
       for (var coinI in operationsResults) {
         const result = operationsResults[coinI];
-        totalAnalysis[coinI] =
-          result.totalSale + result.currentValue - result.totalPurchase;
-        if (totalAnalysis[coinI] > 0) {
+        if (result.currentValue !== 0) {
           totalAnalysis[coinI] =
-            "+" +
-            parseFloat(totalAnalysis[coinI].toFixed(2)).toLocaleString("es-AR");
+            result.totalSale + result.currentValue - result.totalPurchase;
+          if (totalAnalysis[coinI] > 0) {
+            totalAnalysis[coinI] =
+              "$ +" +
+              parseFloat(totalAnalysis[coinI].toFixed(2)).toLocaleString(
+                "es-AR"
+              );
+          } else {
+            totalAnalysis[coinI] =
+              "$ " +
+              parseFloat(totalAnalysis[coinI].toFixed(2)).toLocaleString(
+                "es-AR"
+              );
+          }
+        } else {
+          totalAnalysis[coinI] = "No Disponible";
         }
       }
       return totalAnalysis;
@@ -114,6 +141,7 @@ export default {
         }
         await Promise.all(promises);
         commit("setCryptos", cryptoData);
+        return cryptoData;
       } catch (error) {
         console.error("Error en fetchCryptos:", error);
       }

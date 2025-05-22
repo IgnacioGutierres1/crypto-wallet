@@ -7,7 +7,7 @@
 
 <script>
 import HeaderComponent from "@/components/HeaderComponent.vue";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
@@ -16,9 +16,20 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    ...mapActions("cryptostore", ["fetchCryptos"]),
+  },
   computed: {
+    ...mapGetters("cryptostore", ["exchanges"]),
     ...mapGetters("user", ["login"]),
     ...mapGetters("ui", ["sidebarExpanded"]),
+  },
+  async mounted() {
+    try {
+      await this.fetchCryptos();
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    }
   },
 };
 </script>

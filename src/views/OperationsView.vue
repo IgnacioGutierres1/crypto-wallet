@@ -239,16 +239,11 @@ export default {
     ...mapGetters("user", ["userName", "userId", "balance", "portfolio"]),
     ...mapGetters("ui", ["sidebarExpanded"]),
   },
-  async mounted() {
-    try {
-      await this.fetchCryptos();
-      if (this.exchanges.length > 0) {
-        this.selectedExchange = this.exchanges[0];
-      } else {
-        this.selectedExchange = "";
-      }
-    } catch (error) {
-      console.error("Error al cargar datos:", error);
+  mounted() {
+    if (this.exchanges.length > 0) {
+      this.selectedExchange = this.exchanges[0];
+    } else {
+      this.selectedExchange = "";
     }
   },
 };

@@ -39,9 +39,9 @@
             >
               $
               {{
-                updateBalance(cryptoAmount, crypto)
-                  .toFixed(2)
-                  .toLocaleString("es-AR")
+                parseFloat(
+                  updateBalance(cryptoAmount, crypto).toFixed(2)
+                ).toLocaleString("es-AR")
               }}
             </td>
             <td v-else class="wallet-view__portfolio-cell">No Disponible</td>
@@ -84,7 +84,7 @@
             :key="coin"
           >
             <td class="wallet-view__investments-cell">{{ coin }}</td>
-            <td class="wallet-view__investments-cell">$ {{ result }}</td>
+            <td class="wallet-view__investments-cell">{{ result }}</td>
           </tr>
         </tbody>
       </table>
@@ -154,6 +154,7 @@
     <!-- History Section ENDS -->
 
     <!-- Edit Moviment Modal Section -->
+
     <div v-if="modalEdit" class="wallet-view__editmodal-overlay">
       <div class="wallet-view__editmodal">
         <span
@@ -449,8 +450,8 @@ export default {
   border-bottom: 1px solid var(--color-tableborder);
 }
 
-.wallet-view__investements-row-analysis {
-  border-bottom: 1px solid var(--color-tableborder);
+.wallet-view__investments-row-analysis {
+  border-top: 1px solid var(--color-tableborder);
 }
 
 .wallet-view__investments-cell {
