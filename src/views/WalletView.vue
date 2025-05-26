@@ -62,6 +62,8 @@
           </tr>
         </tfoot>
       </table>
+
+      <PortfolioChart :portfolio="portfolio"></PortfolioChart>
     </div>
 
     <!-- Portfolio Section Ends -->
@@ -220,8 +222,13 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import PortfolioChart from "@/components/PortfolioChart.vue";
+
 export default {
   name: "WalletView",
+  components: {
+    PortfolioChart,
+  },
   data() {
     return {
       modalEdit: false,
