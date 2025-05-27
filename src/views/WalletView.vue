@@ -348,6 +348,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+  width: fit-content;
 }
 
 .wallet-view__title {
@@ -418,12 +419,12 @@ export default {
   border-top: 1px solid black;
 }
 
-@media screen and (max-width: 600px) {
+/* @media screen and (max-width: 600px) {
   .wallet-view__portfolio {
     align-self: start;
   }
 }
-
+ */
 /* --- Portfolio Styles Ends --- */
 
 /* --- Investments Analysis Styles --- */
@@ -438,7 +439,6 @@ export default {
   flex-direction: column;
   align-items: center;
   align-self: center;
-  /* justify-self: center; */
   justify-content: center;
   border-radius: 20px;
   background-color: var(--color-sections-bg);
@@ -466,11 +466,11 @@ export default {
   white-space: nowrap;
 }
 
-@media screen and (max-width: 600px) {
+/* @media screen and (max-width: 600px) {
   .wallet-view__investments {
     align-self: start;
   }
-}
+} */
 
 /* --- Investments Analysis Styles Ends --- */
 
@@ -527,11 +527,11 @@ export default {
   background-color: var(--color-buttonselected-bg);
 }
 
-@media screen and (max-width: 600px) {
+/* @media screen and (max-width: 600px) {
   .wallet-view__history {
     align-self: start;
   }
-}
+} */
 
 /* --- History Styles ENDS --- */
 

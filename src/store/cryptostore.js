@@ -17,10 +17,10 @@ export default {
 
     updateBalance(state) {
       return function (crypto_amount, coin) {
-        if (state.cryptos["ripio"][coin]) {
+        if (state.cryptos["binance"][coin]) {
           const newBalance =
             parseFloat(crypto_amount) *
-            parseFloat(state.cryptos["ripio"][coin].price);
+            parseFloat(state.cryptos["binance"][coin].price);
           return parseFloat(newBalance);
         } else {
           return 0;
